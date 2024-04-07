@@ -23,7 +23,7 @@ export class AuthService {
     this.http.post(`${environment.api}/login`, data).subscribe((response: any) => {
       localStorage.setItem('user', JSON.stringify(response));
       this.user.next(response);
-      this.router.navigate(['/backoffice']);
+      this.router.navigate(['/backoffice'], {replaceUrl: true});
     });
   }
 

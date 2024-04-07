@@ -10,10 +10,14 @@ import { authGuard } from './demo/components/auth/guard/auth.guard';
             {
                 path: 'backoffice', component: AppLayoutComponent,
                 children: [
+                    {
+                        path: 'inventario',
+                        loadChildren: () => import('./inventario/inventary.routes').then(m => m.INVENTORY_ROUTES)
+                    }
                 ],
                 canActivate: [authGuard]
             },
-            { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.routes').then(a => a.AUTH_ROUTES) },
+            { path: '', loadChildren: () => import('./demo/components/auth/auth.routes').then(a => a.AUTH_ROUTES) },
             { path: 'notfound', component: NotfoundComponent },
             { path: '**', redirectTo: '/notfound' },
         ], { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload' })

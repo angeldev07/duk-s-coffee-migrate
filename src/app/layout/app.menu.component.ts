@@ -23,12 +23,12 @@ export class AppMenuComponent implements OnInit {
                 items: [
                     { 
                         label: 'Inventario', 
-                        icon: 'pi pi-fw pi-home', 
-                        routerLink: ['/'],
+                        icon: 'pi pi-shopping-bag', 
                         items: [
-                            { label: 'Categorias', icon: 'pi pi-fw pi-home', routerLink: ['/categorias'] },
-                            { label: 'Revisión', icon: 'pi pi-fw pi-home', routerLink: ['/revision'] },
-                            { label: 'Stock', icon: 'pi pi-fw pi-home', routerLink: ['/stock'] },
+                            { label: 'Productos', icon: 'pi pi-fw pi-briefcase', routerLink: ['/backoffice/inventario/productos'] },
+                            { label: 'Categorias', icon: 'pi pi-fw pi-inbox', routerLink: ['/backoffice/inventario/categorias'] },
+                            { label: 'Revisión', icon: 'pi pi-fw pi-eye', routerLink: ['/backoffice/inventario/revision'] },
+                            // { label: 'Stock', icon: 'pi pi-fw pi-home', routerLink: ['/backoffice/inventario/productos'] },
                         ]
                     },
                     
