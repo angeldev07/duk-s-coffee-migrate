@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
 import { AppLayoutComponent } from "./layout/app.layout.component";
 import { authGuard } from './demo/components/auth/guard/auth.guard';
+import { CustomerComponent } from './clientes/pages/customer/customer.component';
 
 @NgModule({
     imports: [
@@ -13,6 +14,11 @@ import { authGuard } from './demo/components/auth/guard/auth.guard';
                     {
                         path: 'inventario',
                         loadChildren: () => import('./inventario/inventary.routes').then(m => m.INVENTORY_ROUTES)
+                    },
+                    {
+                        path: 'clientes',
+                        // component: CustomerComponent
+                        loadChildren: () => import('./clientes/customer.routes').then(m => m.CUSTOMER_ROUTES)
                     }
                 ],
                 canActivate: [authGuard]

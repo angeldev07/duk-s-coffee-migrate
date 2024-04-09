@@ -21,9 +21,9 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Inventario',
                 items: [
-                    { 
-                        label: 'Inventario', 
-                        icon: 'pi pi-shopping-bag', 
+                    {
+                        label: 'Inventario',
+                        icon: 'pi pi-shopping-bag',
                         items: [
                             { label: 'Productos', icon: 'pi pi-fw pi-briefcase', routerLink: ['/backoffice/inventario/productos'] },
                             { label: 'Categorias', icon: 'pi pi-fw pi-inbox', routerLink: ['/backoffice/inventario/categorias'] },
@@ -31,29 +31,29 @@ export class AppMenuComponent implements OnInit {
                             // { label: 'Stock', icon: 'pi pi-fw pi-home', routerLink: ['/backoffice/inventario/productos'] },
                         ]
                     },
-                    
+
                 ]
             },
             {
                 label: 'Clientes',
                 items: [
-                    { 
-                        label: 'clientes', 
-                        icon: 'pi pi-fw pi-home', 
-                        routerLink: ['/clientes'],
+                    {
+                        label: 'Clientes',
+                        icon: 'pi pi-fw pi-users',
+                        routerLink: ['/backoffice/clientes'],
                     },
-                    
+
                 ]
             },
             {
-                label: 'Ordenes',
+                label: 'Órdenes',
                 items: [
-                    { 
-                        label: 'ordenes', 
-                        icon: 'pi pi-fw pi-home', 
+                    {
+                        label: 'Órdenes',
+                        icon: 'pi pi-fw pi-bell',
                         routerLink: ['/ordenes'],
                     },
-                    
+
                 ]
             },
         ];
