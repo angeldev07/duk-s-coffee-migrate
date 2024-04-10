@@ -14,11 +14,12 @@ import { Customers } from '../../api/customer';
 import { HttpClient } from '@angular/common/http';
 import { Customer } from 'src/app/demo/api/customer';
 import { Message } from 'primeng/api';
+import { FechaFormatoPipe } from 'src/app/shared/pipes/fecha-formato.pipe';
 
 @Component({
     selector: 'app-customer-list',
     standalone: true,
-    imports: [CommonModule, TableModule, ButtonModule, MessagesModule],
+    imports: [CommonModule, TableModule, ButtonModule, MessagesModule, FechaFormatoPipe],
     template: `
         @if (customers.length > 0) {
         <p-table
@@ -63,8 +64,8 @@ import { Message } from 'primeng/api';
                     <td>{{ customer.email }}</td>
                     <td>{{ customer.cardId }}</td>
                     <td>{{ customer.gender }}</td>
-                    <td>{{ customer.birthDay }}</td>
-                    <td>{{ customer.lastVisit }}</td>
+                    <td>{{ customer.birthDay | fechaFormato }}</td>
+                    <td>{{ customer.lastVisit | fechaFormato }}</td>
                     <td>{{ customer.address }}</td>
                     <td>{{ customer.phone }}</td>
                     <td>{{ customer.active }}</td>
