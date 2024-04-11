@@ -1,3 +1,4 @@
+import { ActiveFormatoPipe } from './../../../shared/pipes/active-formato.pipe';
 import { CommonModule } from '@angular/common';
 import {
     Component,
@@ -12,14 +13,14 @@ import { MessagesModule } from 'primeng/messages';
 import { TableModule } from 'primeng/table';
 import { Customers } from '../../api/customer';
 import { HttpClient } from '@angular/common/http';
-import { Customer } from 'src/app/demo/api/customer';
 import { Message } from 'primeng/api';
 import { FechaFormatoPipe } from 'src/app/shared/pipes/fecha-formato.pipe';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 @Component({
     selector: 'app-customer-list',
     standalone: true,
-    imports: [CommonModule, TableModule, ButtonModule, MessagesModule, FechaFormatoPipe],
+    imports: [CommonModule, TableModule, ButtonModule, MessagesModule, FechaFormatoPipe, ActiveFormatoPipe, InputSwitchModule],
     template: `
         @if (customers.length > 0) {
         <p-table
@@ -40,14 +41,14 @@ import { FechaFormatoPipe } from 'src/app/shared/pipes/fecha-formato.pipe';
                     </th>
                     <th pSortableColumn="id">ID <p-sortIcon field="id" /></th>
                     <th pSortableColumn="name">Nombre <p-sortIcon field="name" /></th>
-                    <th pSortableColumn="lastName">Apellidos <p-sortIcon field="email" /></th>
-                    <th pSortableColumn="email">Correo <p-sortIcon field="phone" /></th>
-                    <th pSortableColumn="cardId">Documento <p-sortIcon field="active" /></th>
-                    <th pSortableColumn="gender">Género <p-sortIcon field="name" /></th>
-                    <th pSortableColumn="birthDay">Fecha Nacimiento <p-sortIcon field="email" /></th>
-                    <th pSortableColumn="lastVisit">Última Visita <p-sortIcon field="phone" /></th>
-                    <th pSortableColumn="address">Dirección Residencia <p-sortIcon field="active" /></th>
-                    <th pSortableColumn="phone">Teléfono <p-sortIcon field="active" /></th>
+                    <th pSortableColumn="lastName">Apellidos <p-sortIcon field="lastName" /></th>
+                    <th pSortableColumn="email">Correo <p-sortIcon field="email" /></th>
+                    <th pSortableColumn="cardId">Documento <p-sortIcon field="cardId" /></th>
+                    <th pSortableColumn="gender">Género <p-sortIcon field="gender" /></th>
+                    <th pSortableColumn="birthDay">Fecha Nacimiento <p-sortIcon field="birthDay" /></th>
+                    <th pSortableColumn="lastVisit">Última Visita <p-sortIcon field="lastVisit" /></th>
+                    <th pSortableColumn="address">Dirección Residencia <p-sortIcon field="address" /></th>
+                    <th pSortableColumn="phone">Teléfono <p-sortIcon field="phone" /></th>
                     <th pSortableColumn="active">Activo <p-sortIcon field="active" /></th>
                     <th >Acciones</th>
                 </tr>
@@ -68,7 +69,9 @@ import { FechaFormatoPipe } from 'src/app/shared/pipes/fecha-formato.pipe';
                     <td>{{ customer.lastVisit | fechaFormato }}</td>
                     <td>{{ customer.address }}</td>
                     <td>{{ customer.phone }}</td>
-                    <td>{{ customer.active }}</td>
+                    <td><p-inputSwitch [(ngModel)]="!customer.active" (onChange)="activeChange.emit(customer)"></p-inputSwitch></td>
+
+                 <!-- <td>{{customer.active}}</td> -->
                     <td>
                         <button
                             pButton
@@ -105,7 +108,8 @@ export class CustomerListComponent implements OnInit {
     @Input() customers: Customers[] = [];
     @Output() deleteCustomer = new EventEmitter<number>();
     @Output() updateCustomer = new EventEmitter<Customers>();
-    @Output() deleteCustomers = new EventEmitter<number[]>();
+    // @Output() deleteCustomers = new EventEmitter<number[]>();
+    @Output() activeChange = new EventEmitter<Customers>();
 
     selectedCustomers!: any;
     messages: Message[] | undefined = [{ severity: 'info', summary: 'Lista vacia', detail: 'No hay clientes por mostrar' }];;
@@ -115,8 +119,8 @@ export class CustomerListComponent implements OnInit {
 
     }
 
-    showDeletedProducts() {
-        this.deleteCustomers.emit(this.selectedCustomers.map((customer: Customer) => customer.id));
-      }
+    // showDeletedCustomers() {
+    //     this.deleteCustomers.emit(this.selectedCustomers.map((customer: Customer) => customer.id));
+    //   }
 
 }

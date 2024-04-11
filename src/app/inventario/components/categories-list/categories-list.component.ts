@@ -30,7 +30,7 @@ import { FormsModule } from '@angular/forms';
             [selectionPageOnly]="true"
             [rowsPerPageOptions]="[5, 10, 20]"
             [globalFilterFields]="['name']"
-      > 
+      >
       <ng-template pTemplate="header">
                 <tr>
                     <th pSortableColumn="id">ID <p-sortIcon field="id" /></th>
@@ -64,12 +64,12 @@ import { FormsModule } from '@angular/forms';
                 </tr>
                 }
             </ng-template>
-      
+
       </p-table>
       } @else {
         <p-messages [value]="messages" [enableService]="false" [closable]="false"></p-messages>
       }
-    
+
     `,
     styles: `
       td, th, tr {

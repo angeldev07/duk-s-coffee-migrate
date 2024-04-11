@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Customers } from '../api/customer';
@@ -29,5 +29,11 @@ export class ClienteService {
     customerDetails(id: number) {
         return this.http.get(`${environment.api}/clients/${id}`)
     }
+
+    activeCustomer(id: number, type: boolean) {
+        const url = `${environment.api}/clients/${type ? 'off' : 'on'}`
+        const params = new HttpParams().set('clientId', id)
+        return this.http.put(url, {} ,{params})
+      }
 
 }

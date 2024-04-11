@@ -52,11 +52,12 @@ import { ToastModule } from 'primeng/toast';
                         <app-customer-list
                             [customers]="clientesList"
                             (deleteCustomer)="deleteCustomer($event)"
+                            (deleteCustomers)="setDeleteCustomerList($event)"
+                            (activeChange)="activeChange($event)"
                             (updateCustomer)="
                                 selectedCustomer.set($event);
                                 openAddCustomerDialog = true
                             "
-                            (deleteProducts)="setDeleteCustomerList($event)"
                         />
                     </p-tabPanel>
                     <p-tabPanel header="Activos">
@@ -155,7 +156,7 @@ export class CustomerComponent implements OnInit {
             next: () => {
                 this.getCustomers();
                 this.messageService.clear();
-                this.messageService.add({ severity: 'success', summary: 'Agregado', detail: 'Se ha agregado el producto con éxito' });
+                this.messageService.add({ severity: 'success', summary: 'Agregado', detail: 'Se ha registrado el cliente con éxito' });
             },
             error: (err) => {
                 this.messageService.clear();
@@ -170,7 +171,7 @@ export class CustomerComponent implements OnInit {
             next: () => {
                 this.getCustomers();
                 this.messageService.clear();
-                this.messageService.add({ severity: 'success', summary: 'Eliminado', detail: 'Se ha eliminado el producto con éxito' });
+                this.messageService.add({ severity: 'success', summary: 'Eliminado', detail: 'Se ha eliminado el cliente con éxito' });
             },
             error: (err) => {
                 this.messageService.clear();
@@ -185,7 +186,7 @@ export class CustomerComponent implements OnInit {
             next: () => {
                 this.getCustomers();
                 this.messageService.clear();
-                this.messageService.add({ severity: 'success', summary: 'Actualizado', detail: 'Se ha actualizado el producto con éxito' });
+                this.messageService.add({ severity: 'success', summary: 'Actualizado', detail: 'Se ha actualizado el cliente con éxito' });
             },
             error: (err) => {
                this.messageService.clear();
@@ -197,5 +198,27 @@ export class CustomerComponent implements OnInit {
 
     setDeleteCustomerList(event: any) {
         this.selectedCustomer.set(event);
-      }
+    }
+
+    getCustomersWithoutMessage() {
+        this.customerService.getCustomers().subscribe({
+            next: (res: any) => {
+                this.customerList.set(res);
+            },
+        });
+    }
+
+    activeChange(event: Customers) {
+        this.customerService.activeCustomer(event.id, event.active).subscribe({
+            next: (res: any) => {
+                this.getCustomersWithoutMessage();
+                this.messageService.clear();
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Cliente actualizado',
+                    detail: 'El cliente se ha actualizado correctamente',
+                });
+            },
+        });
+    }
 }
