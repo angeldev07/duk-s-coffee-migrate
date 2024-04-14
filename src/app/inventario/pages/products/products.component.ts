@@ -99,7 +99,8 @@ import { MessageService } from 'primeng/api';
             @if (openAddProductDialog) {
             <app-add-update-product
                 (saveProduct)="saveProduct($event)"
-                [(visible)]="openAddProductDialog"
+                [visible]="openAddProductDialog"
+                (visibleChange)="clear($event)"
                 [categories]="categories().slice(1, categories().length)"
                 [product]="selectedProduct()"
             />
@@ -115,6 +116,7 @@ import { MessageService } from 'primeng/api';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductsComponent implements OnInit {
+
     openAddProductDialog = false;
     productList = signal<Product[]>([]);
     categories = signal<Category[]>([{ id: -1, name: 'Todo', active: true }]);
@@ -251,5 +253,10 @@ export class ProductsComponent implements OnInit {
               console.log(err);
             },
         });
+    }
+
+    clear(event: boolean) {
+       this.openAddProductDialog = false;
+       this.selectedProduct.set(null)
     }
 }
