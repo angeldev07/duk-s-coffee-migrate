@@ -46,12 +46,12 @@ export class AppMenuComponent implements OnInit {
                 ]
             },
             {
-                label: 'Órdenes',
+                label: 'Ordenes',
                 items: [
                     {
-                        label: 'Órdenes',
+                        label: 'Ordenes',
                         icon: 'pi pi-fw pi-bell',
-                        routerLink: ['/ordenes'],
+                        routerLink: ['/backoffice/ordenes'],
                     },
 
                 ]

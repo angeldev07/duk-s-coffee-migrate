@@ -47,30 +47,30 @@ import { ToastModule } from 'primeng/toast';
         </section>
 
         <section>
-        <p-tabView>
-                    <p-tabPanel header="Listado">
-                        <app-customer-list
-                            [customers]="clientesList"
-                            (deleteCustomer)="deleteCustomer($event)"
-                            (deleteCustomers)="setDeleteCustomerList($event)"
-                            (activeChange)="activeChange($event)"
-                            (updateCustomer)="
-                                selectedCustomer.set($event);
-                                openAddCustomerDialog = true
-                            "
-                        />
-                    </p-tabPanel>
-                    <p-tabPanel header="Activos">
-                        <ng-template pTemplate="content">
-                            <app-customer-list [customers]="activeCustomers" />
-                        </ng-template>
-                    </p-tabPanel>
-                    <p-tabPanel header="Deshabilitados">
-                        <ng-template pTemplate="content">
-                            <app-customer-list [customers]="disableCustomers" />
-                        </ng-template>
-                    </p-tabPanel>
-                </p-tabView>
+            <p-tabView>
+                <p-tabPanel header="Listado">
+                    <app-customer-list
+                        [customers]="clientesList"
+                        (deleteCustomer)="deleteCustomer($event)"
+                        (deleteCustomers)="setDeleteCustomerList($event)"
+                        (activeChange)="activeChange($event)"
+                        (updateCustomer)="
+                            selectedCustomer.set($event);
+                            openAddCustomerDialog = true
+                        "
+                    />
+                </p-tabPanel>
+                <p-tabPanel header="Activos">
+                    <ng-template pTemplate="content">
+                        <app-customer-list [customers]="activeCustomers" />
+                    </ng-template>
+                </p-tabPanel>
+                <p-tabPanel header="Deshabilitados">
+                    <ng-template pTemplate="content">
+                        <app-customer-list [customers]="disableCustomers" />
+                    </ng-template>
+                </p-tabPanel>
+            </p-tabView>
         </section>
         @if (openAddCustomerDialog) {
             <app-add-update-customer
