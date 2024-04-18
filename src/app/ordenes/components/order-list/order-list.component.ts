@@ -62,8 +62,8 @@ import { Message } from 'primeng/api';
                     <td>
                         <button
                             pButton
-                            icon="pi pi-trash"
-                            class="p-button-rounded p-button-danger"
+                            icon="pi pi-search"
+                            class="p-button-rounded p-button-info"
                             (click)="deleteOrder.emit(order.id)"
                         ></button>
                     </td>
