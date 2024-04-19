@@ -16,11 +16,21 @@ import { HttpClient } from '@angular/common/http';
 import { Message } from 'primeng/api';
 import { FechaFormatoPipe } from 'src/app/shared/pipes/fecha-formato.pipe';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-customer-list',
     standalone: true,
-    imports: [CommonModule, TableModule, ButtonModule, MessagesModule, FechaFormatoPipe, ActiveFormatoPipe, InputSwitchModule],
+    imports: [
+        CommonModule,
+        TableModule,
+        ButtonModule,
+        MessagesModule,
+        FechaFormatoPipe,
+        ActiveFormatoPipe,
+        FormsModule,
+        InputSwitchModule
+    ],
     template: `
         @if (customers.length > 0) {
         <p-table
@@ -69,9 +79,9 @@ import { InputSwitchModule } from 'primeng/inputswitch';
                     <td>{{ customer.lastVisit | fechaFormato }}</td>
                     <td>{{ customer.address }}</td>
                     <td>{{ customer.phone }}</td>
-                    <td><p-inputSwitch [(ngModel)]="!customer.active" (onChange)="activeChange.emit(customer)"></p-inputSwitch></td>
-
-                 <!-- <td>{{customer.active}}</td> -->
+                    <td>
+                        <p-inputSwitch [(ngModel)]="customer.active" (onChange)="activeChange.emit(customer)"></p-inputSwitch>
+                    </td>
                     <td>
                         <button
                             pButton
@@ -79,6 +89,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
                             class="p-button-rounded p-button-success"
                             (click)="updateCustomer.emit(customer)"
                         ></button>
+
                         <button
                             pButton
                             icon="pi pi-trash"
@@ -108,19 +119,13 @@ export class CustomerListComponent implements OnInit {
     @Input() customers: Customers[] = [];
     @Output() deleteCustomer = new EventEmitter<number>();
     @Output() updateCustomer = new EventEmitter<Customers>();
-    // @Output() deleteCustomers = new EventEmitter<number[]>();
     @Output() activeChange = new EventEmitter<Customers>();
-
     selectedCustomers!: any;
     messages: Message[] | undefined = [{ severity: 'info', summary: 'Lista vacia', detail: 'No hay clientes por mostrar' }];;
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) { }
+
     ngOnInit(): void {
-
     }
-
-    // showDeletedCustomers() {
-    //     this.deleteCustomers.emit(this.selectedCustomers.map((customer: Customer) => customer.id));
-    //   }
 
 }

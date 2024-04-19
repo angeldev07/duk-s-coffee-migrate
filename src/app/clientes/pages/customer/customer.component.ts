@@ -115,6 +115,7 @@ export class CustomerComponent implements OnInit {
 
     get clientesList() {
         return this.customerList();
+
     }
 
 

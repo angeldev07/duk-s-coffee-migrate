@@ -8,20 +8,12 @@ import { ActiveFormatoPipe } from 'src/app/shared/pipes/active-formato.pipe';
 import { FechaFormatoPipe } from 'src/app/shared/pipes/fecha-formato.pipe';
 import { Orders } from '../../api/order';
 import { Message } from 'primeng/api';
+import { OrderDetailsComponent } from "../order-details/order-details/order-details.component";
 
 @Component({
-  selector: 'app-order-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    TableModule,
-    ButtonModule,
-    MessagesModule,
-    FechaFormatoPipe,
-    ActiveFormatoPipe,
-    InputSwitchModule
-  ],
-  template: `
+    selector: 'app-order-list',
+    standalone: true,
+    template: `
     @if (orders.length > 0) {
         <p-table
             [value]="orders"
@@ -39,11 +31,10 @@ import { Message } from 'primeng/api';
                         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                     </th>
                     <th pSortableColumn="id">ID <p-sortIcon field="id" /></th>
-                    <th pSortableColumn="reference">Referencia <p-sortIcon field="reference" /></th>
                     <th pSortableColumn="customer">Cliente <p-sortIcon field="customer" /></th>
-                    <th pSortableColumn="total">Total <p-sortIcon field="total" /></th>
-                    <th pSortableColumn="state">Estado <p-sortIcon field="state" /></th>
-                    <th pSortableColumn="dateOrder">Fecha <p-sortIcon field="dateOrder" /></th>
+                    <th pSortableColumn="reference">Referencia Factura<p-sortIcon field="reference" /></th>
+                    <th pSortableColumn="total">Total Factura<p-sortIcon field="total" /></th>
+                    <th pSortableColumn="dateOrder">Fecha Pedido<p-sortIcon field="dateOrder" /></th>
                     <th >Acciones</th>
                 </tr>
             </ng-template>
@@ -54,22 +45,29 @@ import { Message } from 'primeng/api';
                         <p-tableCheckbox [value]="order"></p-tableCheckbox>
                     </th>
                     <td>{{ order.id }}</td>
-                    <td>{{ order.reference }}</td>
-                    <td>{{ order.customer }}</td>
-                    <td>{{ order.total }}</td>
-                    <td>{{ order.state }}</td>
-                    <td>{{ order.dateOrder | fechaFormato}}</td>
+                    <td>{{ order.client.name + " " + order.client.lastName}}</td>
+                    <td>{{ order.bill.id }}</td>
+                    <td>{{ "$ "+order.bill.totalPrice+" COP" }}</td>
+                    <td>{{ order.date | fechaFormato}}</td>
                     <td>
-                        <button
-                            pButton
+                        <p-button
                             icon="pi pi-search"
                             class="p-button-rounded p-button-info"
-                            (click)="deleteOrder.emit(order.id)"
-                        ></button>
+                            (onClick)="orderDetails.emit(order.id); openOrderDetailsDialog(order.id)"
+                        ></p-button>
                     </td>
                 </tr>
                 }
+
+
+                @if (openOrderDetailsDialog === order.id) {
+                <app-order-details
+                    [orderId]="selectedOrderId"
+                    [(visible)]="openOrderDetailsDialog"
+                />
+                }
             </ng-template>
+
         </p-table>
     } @else {
           <p-messages [value]="messages" [enableService]="false" [closable]="false"></p-messages>
@@ -84,13 +82,26 @@ import { Message } from 'primeng/api';
     }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        CommonModule,
+        TableModule,
+        ButtonModule,
+        MessagesModule,
+        FechaFormatoPipe,
+        ActiveFormatoPipe,
+        InputSwitchModule,
+        OrderDetailsComponent
+    ]
 })
 export class OrderListComponent {
     @Input() orders: Orders[] = [];
-    @Output() deleteOrder = new EventEmitter<number>();
-    //@Output() updateCustomer = new EventEmitter<Customers>();
-    // @Output() deleteCustomers = new EventEmitter<number[]>();
-    //@Output() activeChange = new EventEmitter<Customers>();
+    @Output() orderDetails = new EventEmitter<number>();
+
+    selectedOrderId: number | null = null;
+
+    openOrderDetails(orderId: number) {
+        this.selectedOrderId = orderId;
+      }
 
     messages: Message[] | undefined = [{ severity: 'info', summary: 'Lista vacia', detail: 'No hay ordenes por mostrar' }];;
 

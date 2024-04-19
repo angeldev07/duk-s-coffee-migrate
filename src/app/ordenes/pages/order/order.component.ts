@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -10,6 +10,7 @@ import { OrderListComponent } from '../../components/order-list/order-list.compo
 import { AddOrderComponent } from '../../components/add-order/add-order.component';
 import { MessageService } from 'primeng/api';
 import { Orders } from '../../api/order';
+import { OrdenService } from '../../services/orden.service';
 
 @Component({
   selector: 'app-order',
@@ -35,19 +36,23 @@ import { Orders } from '../../api/order';
                     icon="pi pi-plus"
                     [iconPos]="'right'"
                     [outlined]="true"
+                    (onClick)="openAddOrderDialog = true"
                 ></p-button>
         </section>
         <section>
-        <p-tabView>
-                    <p-tabPanel header="Listado">
-                        <app-order-list
-                            [orders]="orderList"
-                        />
-                    </p-tabPanel>
-                </p-tabView>
+            <p-tabView>
+                <p-tabPanel header="Listado">
+                    <app-order-list
+                        [orders]="ordenesList"
+                        (orderDetails)="getOrderDetails($event)"
+                    />
+                </p-tabPanel>
+            </p-tabView>
         </section>
         @if (openAddOrderDialog) {
             <app-add-order
+                (saveOrder)="saveNewOrder($event)"
+                [(visible)]="openAddOrderDialog"
             />
             }
             <p-toast />
@@ -65,35 +70,71 @@ import { Orders } from '../../api/order';
 export class OrderComponent implements OnInit {
 
     openAddOrderDialog = false;
-    //orderList = signal<Customers[]>([]);
-    orderList: Orders[] = [
-        {
-            id: 1,
-            reference: "REF-001",
-            customer: "John Doe",
-            total: 100.50,
-            state: "Pending",
-            dateOrder: new Date("2024-05-01")
-        },
-        {
-            id: 2,
-            reference: "REF-002",
-            customer: "Jane Smith",
-            total: 150.75,
-            state: "Completed",
-            dateOrder: new Date("2024-05-05")
-        },
-        // Agrega más objetos según sea necesario
-    ];
+    orderList = signal<Orders[]>([]);
+    orderDetails = signal<Orders | null>(null);
     // selectedCustomer = signal<Customers | null | number[]>(null);
 
     constructor(
-       // private customerService: ClienteService,
+        private orderService: OrdenService,
         private messageService: MessageService
     ) { }
 
 
     ngOnInit(): void {
+        this.getOrdersList();
+    }
 
+    get ordenesList() {
+        return this.orderList();
+    }
+
+    getOrdersList() {
+        this.orderService.getOrders().subscribe({
+            next: (res: any) => {
+                this.orderList.set(res);
+                console.log(this.ordenesList);
+            },
+            error: (err) => {
+                console.log(err);
+            },
+        });
+    }
+
+    getOrderDetails(orderId: number) {
+        this.orderService.getOrdersById(orderId).subscribe({
+            next: (res: any) => {
+                this.orderDetails.set(res);
+                console.log(res);
+            },
+            error: (err) => {
+                console.log(err);
+            },
+        });
+    }
+
+    saveCustomer(orden: Orders) {
+            this.saveNewOrder(orden);
+    }
+
+    saveNewOrder(orden: Orders) {
+        const data = {
+            id: orden.id,
+            customer: orden.client,
+            total: orden.total,
+            dateOrder: orden.date
+        };
+
+        this.orderService.saveOrder(data).subscribe({
+            next: () => {
+                // this.getCustomers();
+                this.messageService.clear();
+                this.messageService.add({ severity: 'success', summary: 'Agregado', detail: 'Se ha registrado el cliente con éxito' });
+            },
+            error: (err) => {
+                this.messageService.clear();
+                this.messageService.add({ severity: 'error', summary: 'Error :(', detail: 'Ha ocurrido un error inesperado. Intentelo de nuevo' });
+                console.log(err);
+            },
+        });
     }
 }

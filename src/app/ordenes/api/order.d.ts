@@ -1,8 +1,7 @@
 export interface Orders {
     id: number;
-    reference: string;
-    customer: string;
+    client: string;
+    bill: number;
+    date: Date;
     total: number;
-    state: string;
-    dateOrder: Date;
 }
