@@ -69,7 +69,7 @@ import { OrdenService } from '../../services/orden.service';
 })
 export class OrderComponent implements OnInit {
 
-    openAddOrderDialog = false;
+    openAddOrderDialog = true;
     orderList = signal<Orders[]>([]);
     orderDetails = signal<Orders | null>(null);
     // selectedCustomer = signal<Customers | null | number[]>(null);
