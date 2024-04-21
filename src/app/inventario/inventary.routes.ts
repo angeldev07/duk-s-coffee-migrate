@@ -16,5 +16,9 @@ export const INVENTORY_ROUTES: Routes = [
         path: 'revision',
         component: RevisionComponent
     },
+    {
+        path: '**',
+        redirectTo: 'productos'
+    }
 
 ]
