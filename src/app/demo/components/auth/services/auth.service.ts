@@ -13,10 +13,19 @@ export class AuthService {
 
   user = new BehaviorSubject<User | null>(null);
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) { 
+    const user = localStorage.getItem('user');
+    if(user){
+      this.user.next(JSON.parse(user).user);
+    }
+
+  }
 
   get user$(){
     return this.user.asObservable(); 
+  }
+  get userValue (){
+    return this.user.getValue();
   }
 
   public login(data: LoginData){
@@ -25,6 +34,12 @@ export class AuthService {
       this.user.next(response);
       this.router.navigate(['/backoffice'], {replaceUrl: true});
     });
+  }
+
+  public logout(){
+    localStorage.clear();
+    this.user.next(null);
+    this.router.navigate(['/login'], {replaceUrl: true});
   }
 
   public isAuthenticated(){

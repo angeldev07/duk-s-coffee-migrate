@@ -15,6 +15,11 @@ import { BillComponent } from '../bill/bill.component';
 import { PickListModule } from 'primeng/picklist';
 import { ProductoService } from 'src/app/inventario/services/producto.service';
 import { Product } from 'src/app/inventario/api';
+import { map } from 'rxjs';
+import { NewCustomerComponent } from '../new-customer/new-customer.component';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { AuthService } from 'src/app/demo/components/auth/services/auth.service';
 
 @Component({
   selector: 'app-add-order',
@@ -31,22 +36,27 @@ import { Product } from 'src/app/inventario/api';
     ButtonModule,
     DropdownModule,
     BillComponent,
-    PickListModule
+    PickListModule,
+    NewCustomerComponent,
+    ToastModule
   ],
+  providers: [MessageService],
   template: `
     <p-dialog
         [(visible)]="visible"
         [modal]="true"
-        maskStyle="backdrop-filter: blur(2px);"
+        maskStyle="backdrop-filter: blur(2px); overflow-y: auto"
         [style]="{ width: '90vw',height: '550px' ,boxShadow: 'none' }"
         [draggable]="false"
-        [resizable]="false">
+        [resizable]="false"
+        (onHide)="visibleChange.emit(false)"
+        >
 
         <ng-template pTemplate="headless">
             <div class="grid gap-3">
 
                 <!-- seccion para el cliente y los prodcutos dividoso en 2, arriba la infromacion del cliente, abajo los productos -->
-                <section class="grid col  md:col-6  border-round"> 
+                <section class="grid col  md:col-7  border-round"> 
 
                     <!-- seccion para la informacion del cliente -->
                     <section class="col-12 bg-white mb-3 border-round p-fluid">
@@ -62,7 +72,7 @@ import { Product } from 'src/app/inventario/api';
 
                         @if(clientControls().existClient){
                             <!-- Mostrar tabla de cliente actuales -->
-                            <p-dropdown [options]="customers" optionLabel="name" [showClear]="true" placeholder="Seleccione un cliente">
+                            <p-dropdown [options]="customers" optionLabel="name" [showClear]="true" placeholder="Seleccione un cliente" (onChange)="selectCustomer($event)">
                                 <ng-template pTemplate="selectedItem">
                                     @if (true) {
                                         <div class="flex align-items-center gap-2" *ngIf="selectedCountry">
@@ -83,37 +93,7 @@ import { Product } from 'src/app/inventario/api';
                                                 
                         @if (clientControls().isNewClient) {
                             <!-- aca ira el formulario del nuevo cliente -->
-                            <form [formGroup]="customerForm" class="formgrid grid px-3">
-                                <div class="field col-12 md:col-6">
-                                    <label for="Nombre">Nombres</label>
-                                    <input type="text" pInputText formControlName="name" inputId="Nombre"/>
-                                </div>
-                                <div class="field col-12 md:col-6">
-                                    <label for="lastname">Apellidos</label>
-                                    <input type="text" pInputText formControlName="lastName" inputId="lastname"/>
-                                </div>
-
-                                <div class="field col-12 md:col-6">
-                                    <label for="email">correo</label>
-                                    <input type="email" pInputText formControlName="email" inputId="email"/>
-                                </div>
-                                <div class="field col-12 md:col-6">
-                                    <label for="cardId">CC</label>
-                                    <input type="number" pInputText formControlName="cardId" inputId="cardId"/>
-                                </div>
-
-                                <div class="field col-12 md:col-6">
-                                    <label for="address">direccion</label>
-                                    <input type="text" pInputText formControlName="address" inputId="address"/>
-                                </div>
-                                <div class="field col-12 md:col-6">
-                                    <label for="phone">Celular</label>
-                                    <input type="number" pInputText formControlName="phone" inputId="phone"/>
-                                </div>
-                                <div class=" field col-12 flex justify-content-end">
-                                    <p-button label="Guardar" [raised]="true" [disabled]="customerForm.invalid"></p-button>
-                                </div>
-                            </form>
+                           <app-new-customer (onSaveCustomer)="saveCustomer($event)" />
                         }
 
                     </section>
@@ -121,7 +101,8 @@ import { Product } from 'src/app/inventario/api';
                     <section class="col-12 bg-white border-round">
                         <h2>Seleccion de productos</h2>
                         <p-pickList [source]="sourceProducts" [target]="targetProducts" sourceHeader="Productos" targetHeader="Seleccionar" [dragdrop]="true" [responsive]="true"
-                           (onMoveToTarget)="onMove($event)">
+                           (onMoveToTarget)="onMove($event)" (onMoveToSource)="onMove($event)" (onMoveAllToSource)="onMove($event)" (onMoveAllToTarget)="onMove($event)" 
+                           filterBy="name" sourceFilterPlaceholder="Buscar por nombre" targetFilterPlaceholder="Buscar por nombre">
                             <ng-template let-product pTemplate="item">
                                 <div class="flex flex-wrap p-2 align-items-center gap-3">
                                     <div class="flex-1 flex flex-column gap-2">
@@ -140,27 +121,27 @@ import { Product } from 'src/app/inventario/api';
                 </section>
 
                 <!-- seccion para ver la factura que se generara dinamicamente -->
-                <section class="bg-white col border-round">
-                   <app-bill [products]="targetProducts" />
+                <section class="bg-white col border-round bill">
+                   <app-bill [products]="this.billInfo().products" [customer]="this.billInfo().customer" (onSaveBill)="saveBill($event)" />
                 </section>
 
             </div>
+            <p-toast></p-toast>
         </ng-template>
-
     </p-dialog>
   `,
   styles: `
-      :host {
-      display: block;
-    }
+     .bill{
+        height: 550px;
+        overflow-y: auto;
+     }
   `,
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddOrderComponent implements OnInit {
-    @Input() order: Orders | null = null;
     @Input() visible: boolean;
     @Output() visibleChange = new EventEmitter<boolean>();
-    @Output() saveOrder = new EventEmitter<Orders>();
+    @Output() saveOrder = new EventEmitter();
 
     // Controles de clientes 
     clientControls = signal({
@@ -173,17 +154,6 @@ export class AddOrderComponent implements OnInit {
 
     customers: Customers[] = []
 
-    customerForm: FormGroup = this.fb.group({
-        name: ['', [Validators.required]],
-        lastName: ['', [Validators.required]],
-        email:  ["", [Validators.required]],
-        cardId: ['', [Validators.required]],
-        address: ['', [Validators.required]],
-        phone: ['', [Validators.required]],
-    });
-
-    //
-
     // productos
     sourceProducts: Product[] = [];
     targetProducts: Product[] = [];
@@ -191,11 +161,21 @@ export class AddOrderComponent implements OnInit {
 
     orderForm: FormGroup;
 
-    constructor(private fb: FormBuilder, private customerService: ClienteService, private productService: ProductoService) {}
+    //bill inputs
+    billInfo = signal({customer: null, products: []})
+
+    constructor(
+        private fb: FormBuilder, private customerService: ClienteService, 
+        private productService: ProductoService,
+        private messageService: MessageService,
+        private auth: AuthService
+    ) {}
 
     ngOnInit(): void {
 
-        this.productService.getProducts().subscribe({
+        this.productService.getProducts().pipe(
+            map((res: any) => res.map((product: Product) => ({...product, quantity: 1})) )
+        ).subscribe({
             next: (res: any) => {
                 this.sourceProducts = res;
             },
@@ -233,21 +213,87 @@ export class AddOrderComponent implements OnInit {
                 return
             }
 
-            this.customerService.getCustomers().subscribe({
-                next: (res: any) => {
-                    this.customers = res;
-                    localStorage.setItem('customers', JSON.stringify(res));
-                },
-                error: (err) => {
-                    console.log(err);
-                },
-            });
+            this.getClients('Lista cargada', 'Lista de clientes cargada correctamente.')
         }
 
     }
 
     onMove(event: any) {
-        this.targetProducts = [...this.targetProducts.map( item => ({...item, quantity: 1}))]
+        const {customer} = this.billInfo()
+        this.billInfo.set( {
+            products: [...this.targetProducts],
+            customer
+        })
+    }
+
+    saveCustomer(event: Customers){
+        this.billInfo.update((state) => ({...state, customer: event}))
+        this.customerService.saveCustomer(event).subscribe(
+            {
+                next: (res: any) => {
+                    localStorage.removeItem('customers');
+                    this.clientControls.set({
+                        open: false,
+                        selectedClient: res,
+                        isNewClient: false,
+                        existClient: true,
+                        showForm: false
+                    })
+                },
+                error: (err) => {
+                    console.log(err);
+                },
+            }
+        )
+    }
+
+    private getClients(title: string, message: string){
+        this.customerService.getCustomers().subscribe({
+            next: (res: any) => {
+                this.customers = res;
+                localStorage.setItem('customers', JSON.stringify(res));
+                this.messageService.clear()
+                this.messageService.add({ severity: 'success', summary: title, detail: message });
+            },
+            error: (err) => {
+                console.log(err);
+                this.messageService.clear()
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ha ocurrido un error inesperado, contacte con soporte. ' });
+            },
+        });
+    }
+
+    selectCustomer(event){
+        const {value} = event
+        this.clientControls.set({
+            open: false,
+            selectedClient: null,
+            isNewClient: false,
+            existClient: false,
+            showForm: false
+        })
+
+        this.billInfo.update((state) => ({...state, customer: value}))
+        
+    }
+
+    saveBill(event:any){
+        const {customer, products} = event
+        console.log(this.auth.user.value.id);
+        
+        const data = {
+            id: -1,
+            userId:this.auth.user.value.id,
+            clientId: customer.id,
+            date: new Date(),
+            orderxproducts: products,
+            billId: -1
+        }
+
+        this.saveOrder.emit(data)
+        this.visibleChange.emit(false)
+        
+        
     }
 
 }

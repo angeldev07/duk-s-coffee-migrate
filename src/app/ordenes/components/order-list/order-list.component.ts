@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { InputSwitchModule } from 'primeng/inputswitch';
@@ -47,13 +47,13 @@ import { OrderDetailsComponent } from "../order-details/order-details/order-deta
                     <td>{{ order.id }}</td>
                     <td>{{ order.client.name + " " + order.client.lastName}}</td>
                     <td>{{ order.bill.id }}</td>
-                    <td>{{ "$ "+order.bill.totalPrice+" COP" }}</td>
+                    <td>{{ order.bill.totalPrice | currency}} COP</td>
                     <td>{{ order.date | fechaFormato}}</td>
                     <td>
                         <p-button
                             icon="pi pi-search"
                             class="p-button-rounded p-button-info"
-                            (onClick)="orderDetails.emit(order.id); openOrderDetailsDialog(order.id)"
+                            (onClick)="openOrderDetailsDialog(order.id)"
                         ></p-button>
                     </td>
                 </tr>
@@ -90,18 +90,24 @@ import { OrderDetailsComponent } from "../order-details/order-details/order-deta
         FechaFormatoPipe,
         ActiveFormatoPipe,
         InputSwitchModule,
-        OrderDetailsComponent
+        OrderDetailsComponent,
+        CurrencyPipe
     ]
 })
 export class OrderListComponent {
     @Input() orders: Orders[] = [];
-    @Output() orderDetails = new EventEmitter<number>();
+    @Output() orderDetails = new EventEmitter();
 
     selectedOrderId: number | null = null;
 
     openOrderDetails(orderId: number) {
         this.selectedOrderId = orderId;
-      }
+    }
+    openOrderDetailsDialog(id:number){
+        this.orderDetails.emit(id);
+    }
+
+    
 
     messages: Message[] | undefined = [{ severity: 'info', summary: 'Lista vacia', detail: 'No hay ordenes por mostrar' }];;
 

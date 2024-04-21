@@ -15,6 +15,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { Customers } from 'src/app/clientes/api/customer';
+import { EmailValidator } from 'src/app/ordenes/directives/check-email.';
 
 @Component({
   selector: 'app-add-update-customer',
@@ -94,7 +95,7 @@ import { Customers } from 'src/app/clientes/api/customer';
                 />
                 @if (validateInput('email')) {
                 <span class="text-red-500 text-md block p-2"
-                     >El correo es obligatorio</span
+                     >El correo es obligatorio ó ya en uso</span
                 >
                 }
             </div>
@@ -119,13 +120,6 @@ import { Customers } from 'src/app/clientes/api/customer';
                 <label for="gender" class="font-semibold block mb-2"
                     >Género</label
                 >
-                <!-- <input
-                    id="gender"
-                    type="text"
-                    formControlName="gender"
-                    pInputText
-                    class="w-full"
-                /> -->
                 <div *ngFor="let gender of genders" class="field-checkbox">
                     <input type="radio" [id]="gender.key" [value]="gender.key" formControlName="gender">
                     <label [for]="gender.key" class="ml-2">{{ gender.name }}</label>
@@ -198,19 +192,19 @@ import { Customers } from 'src/app/clientes/api/customer';
                 >
                 <p-inputSwitch formControlName="active"></p-inputSwitch>
             </div>
+            <div class="pt-3 flex justify-content-end">
+                <p-button
+                    icon="pi pi-check"
+                    iconPos="right"
+                    type="submit"
+                    label="{{ customer ? 'Actualizar' : 'Guardar' }}"
+                    pAutoFocus
+                    [autofocus]="true"
+                    [disabled]="customerForm.invalid"
+                ></p-button>
+            </div>
         </form>
-    <ng-template pTemplate="footer">
-                <div class="pt-3">
-                    <p-button
-                        icon="pi pi-check"
-                        iconPos="right"
-                        (onClick)="submitCustomer()"
-                        label="{{ customer ? 'Actualizar' : 'Guardar' }}"
-                        pAutoFocus
-                        [autofocus]="true"
-                    ></p-button>
-                </div>
-            </ng-template>
+
     </p-dialog>
   `,
   styles: `
@@ -229,7 +223,7 @@ export class AddUpdateCustomerComponent implements OnInit {
     customerForm = this.fb.group({
         name: ['', [Validators.required]],
         lastName: ['', [Validators.required]],
-        email: ["", [Validators.required]],
+        email: ["", [Validators.required], [this.emailValidator.validate.bind(this.emailValidator)]],
         cardId: ['', [Validators.required]],
         gender: ['', [Validators.required]],
         birthDay: [new Date(), [Validators.required]],
@@ -241,7 +235,7 @@ export class AddUpdateCustomerComponent implements OnInit {
 
     genders = [ { key: 'M', name: 'Masculino' }, { key: 'F', name: 'Femenino' } ];
 
-    constructor(private fb: FormBuilder) {}
+    constructor(private fb: FormBuilder, private emailValidator: EmailValidator) {}
 
     ngOnInit(): void {
         if(!!this.customer) {

@@ -34,6 +34,10 @@ export class ClienteService {
         const url = `${environment.api}/clients/${type ? 'off' : 'on'}`
         const params = new HttpParams().set('clientId', id)
         return this.http.put(url, {} ,{params})
-      }
+    }
+
+    checkEmailAvailability(email: string) {
+        return this.http.get(`${environment.api}/clients/check-email?email=${email}`)
+    }
 
 }

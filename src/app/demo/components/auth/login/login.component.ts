@@ -26,8 +26,8 @@ export class LoginComponent {
 
     valCheck: string[] = ['remember'];
     form = this.fb.group({
-        email: ['admin@example.com', [Validators.required, Validators.email]],
-        password: ['123', [Validators.required]],
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required]],
     });
 
     constructor(public layoutService: LayoutService, private authService: AuthService,  private fb: FormBuilder ) { }
