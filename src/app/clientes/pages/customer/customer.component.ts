@@ -115,7 +115,6 @@ export class CustomerComponent implements OnInit {
 
     get clientesList() {
         return this.customerList();
-
     }
 
 
@@ -152,7 +151,6 @@ export class CustomerComponent implements OnInit {
             address: cliente.address,
             phone: cliente.phone,
         };
-
         this.customerService.saveCustomer(data).subscribe({
             next: () => {
                 this.getCustomers();
@@ -183,7 +181,7 @@ export class CustomerComponent implements OnInit {
     }
 
     updateCustomer(cliente: Customers) {
-        this.customerService.updateCustomer(cliente).subscribe({
+        this.customerService.updateCustomer(cliente.id, cliente).subscribe({
             next: () => {
                 this.getCustomers();
                 this.messageService.clear();

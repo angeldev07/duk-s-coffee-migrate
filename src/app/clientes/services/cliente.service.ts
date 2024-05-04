@@ -22,8 +22,8 @@ export class ClienteService {
         return this.http.delete(`${environment.api}/clients/delete/${id}`)
     }
 
-    updateCustomer(customer: Customers) {
-        return this.http.put(`${environment.api}/clients/update`, customer)
+    updateCustomer(id: number, customer: Customers) {
+        return this.http.put(`${environment.api}/clients/update/${id}`, customer)
     }
 
     customerDetails(id: number) {
@@ -31,7 +31,7 @@ export class ClienteService {
     }
 
     activeCustomer(id: number, type: boolean) {
-        const url = `${environment.api}/clients/${type ? 'off' : 'on'}`
+        const url = `${environment.api}/clients/${type ? 'on' : 'off'}`
         const params = new HttpParams().set('clientId', id)
         return this.http.put(url, {} ,{params})
       }
