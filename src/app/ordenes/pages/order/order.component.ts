@@ -11,6 +11,7 @@ import { AddOrderComponent } from '../../components/add-order/add-order.componen
 import { MessageService } from 'primeng/api';
 import { Orders } from '../../api/order';
 import { OrdenService } from '../../services/orden.service';
+import { OrderDetailsComponent } from '../../components/order-details/order-details/order-details.component';
 
 @Component({
   selector: 'app-order',
@@ -24,7 +25,8 @@ import { OrdenService } from '../../services/orden.service';
     DropdownModule,
     ToastModule,
     OrderListComponent,
-    AddOrderComponent
+    AddOrderComponent,
+    OrderDetailsComponent
   ],
   providers: [MessageService],
   template: `
@@ -54,7 +56,11 @@ import { OrdenService } from '../../services/orden.service';
                 (saveOrder)="saveNewOrder($event)"
                 [(visible)]="openAddOrderDialog"
             />
-            }
+        }
+
+        @if (openOrderDetailsDialog) {
+            <app-order-details [(visible)]="openOrderDetailsDialog" [order]="orderDetails()" />
+        }
             <p-toast />
     </main>
 
@@ -72,7 +78,7 @@ export class OrderComponent implements OnInit {
     openAddOrderDialog = false;
     orderList = signal<Orders[]>([]);
     orderDetails = signal<Orders | null>(null);
-    // selectedCustomer = signal<Customers | null | number[]>(null);
+    openOrderDetailsDialog = false;
 
     constructor(
         private orderService: OrdenService,
@@ -92,7 +98,6 @@ export class OrderComponent implements OnInit {
         this.orderService.getOrders().subscribe({
             next: (res: any) => {
                 this.orderList.set(res);
-                console.log(this.ordenesList);
             },
             error: (err) => {
                 console.log(err);
@@ -101,10 +106,10 @@ export class OrderComponent implements OnInit {
     }
 
     getOrderDetails(orderId: number) {
+        this.openOrderDetailsDialog = true;
         this.orderService.getOrdersById(orderId).subscribe({
             next: (res: any) => {
                 this.orderDetails.set(res);
-                console.log(res);
             },
             error: (err) => {
                 console.log(err);
@@ -116,17 +121,11 @@ export class OrderComponent implements OnInit {
             this.saveNewOrder(orden);
     }
 
-    saveNewOrder(orden: Orders) {
-        const data = {
-            id: orden.id,
-            customer: orden.client,
-            total: orden.total,
-            dateOrder: orden.date
-        };
+    saveNewOrder(orden: any) {
 
-        this.orderService.saveOrder(data).subscribe({
+        this.orderService.saveOrder(orden).subscribe({
             next: () => {
-                // this.getCustomers();
+                this.getOrdersList();   
                 this.messageService.clear();
                 this.messageService.add({ severity: 'success', summary: 'Agregado', detail: 'Se ha registrado el cliente con éxito' });
             },

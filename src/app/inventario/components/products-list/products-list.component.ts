@@ -49,7 +49,9 @@ import { environment } from 'src/environments/environment';
                       Categoria 
                       <p-sortIcon field="category.name" />
                     </th>
-                    <th >Acciones</th>
+                    @if (actionsEnabled) {
+                        <th >Acciones</th>
+                    }
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-product>
@@ -61,7 +63,7 @@ import { environment } from 'src/environments/environment';
                     <td>{{ product.id }}</td>
                     <td>{{ product.name }}</td>
                     <td>{{ product.basePrice }}</td>
-                    <td>{{ product.amount }}</td>
+                    <td>{{ showAmountBill ?  product.amountBill : product.amount  }}</td>
                     <td>{{ product.active }}</td>
                     <td>
                         {{
@@ -70,20 +72,22 @@ import { environment } from 'src/environments/environment';
                                 : 'Sin categoria'
                         }}
                     </td>
-                    <td>
-                        <button
-                            pButton
-                            icon="pi pi-pencil"
-                            class="p-button-rounded p-button-success"
-                            (click)="updateProduct.emit(product)"
-                        ></button>
-                        <button
-                            pButton
-                            icon="pi pi-trash"
-                            class="p-button-rounded p-button-danger"
-                            (click)="deleteProduct.emit(product.id)"
-                        ></button>
-                    </td>
+                    @if (actionsEnabled) {
+                        <td>
+                            <button
+                                pButton
+                                icon="pi pi-pencil"
+                                class="p-button-rounded p-button-success"
+                                (click)="updateProduct.emit(product)"
+                            ></button>
+                            <button
+                                pButton
+                                icon="pi pi-trash"
+                                class="p-button-rounded p-button-danger"
+                                (click)="deleteProduct.emit(product.id)"
+                            ></button>
+                        </td>
+                    }
                 </tr>
                 }
             </ng-template>
@@ -107,6 +111,9 @@ export class ProductsListComponent implements OnInit {
     @Output() deleteProduct = new EventEmitter<number>();
     @Output() updateProduct = new EventEmitter<Product>();
     @Output() deleteProducts = new EventEmitter<number[]>();
+
+    @Input() actionsEnabled = true;
+    @Input() showAmountBill = false;
 
     selectedProducts!: any;
     messages: Message[] | undefined = [{ severity: 'info', summary: 'Lista vacia', detail: 'No hay productos por mostrar' }];;
