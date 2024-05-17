@@ -1,23 +1,19 @@
 <div class="align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
-    <!-- style="background-image: url('/assets/BackgroundLogin.jpg'); margin: 0; padding :0; background-size: cover; background-position: center; height: 100vh; width: 100vw;" -->
-    <div class="grid align-items-center justify-content-center">
-        <div class="col max-h-screen">
-            <img src="assets/BackgroundLogin.jpg" alt="" class="left-0" style="background-size: cover; width: 75vw;">
+    <div class="container">
+        <div class="img-container max-h-screen">
+            <img src="assets/BackgroundLogin.jpg" alt="back-img" class="backImg left-0">
         </div>
-        <!-- <img src="assets/layout/images/{{layoutService.config().colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0">                 -->
-        <div class="col-5 flex bg-white absolute right-0 bottom-0 align-items-center" style="border-radius:56px; padding:0.3rem; height: 100%;">
-
-            <div class="w-full surface-card sm:px-8 sm:bg-black" style="border-radius:53px">
+        <div class="loginForm flex bg-white absolute right-0 bottom-0 align-items-center">
+            <div class="w-10 surface-card mx-auto" style="border-radius:53px">
                 <div class="text-center">
-                    <img src="assets/Logo.jpeg" alt="Logo" class="border-circle w-15rem h-15rem mb-4">
+                    <img src="assets/Logo.jpeg" alt="Logo" class="logImg border-circle mb-4">
                     <div class="text-900 text-3xl font-medium mb-3">Sign in</div>
                 </div>
-
-                <div>
+                <div class="">
                     <form [formGroup]="form" (ngSubmit)="doLogin()">
                         <div class="mb-3">
                             <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
-                            <input id="email1" formControlName="email" type="text" placeholder="Email address" pInputText class="w-full md:w-30rem min-w-full" style="padding:1rem">
+                            <input id="email1" formControlName="email" type="text" placeholder="Email address" pInputText class="w-full min-w-full" style="padding:1rem">
                             @if (validateInput('email')) {
                                 <span class="block text-red-500 mt-2">Este campo es requerido</span>
                             }
@@ -25,12 +21,11 @@
 
                         <div class="mb-3">
                             <label for="password1" class="block text-900 font-medium text-xl mb-2">Password</label>
-                            <p-password id="password1" formControlName="password" placeholder="Password" [toggleMask]="true" styleClass="mb-2 min-w-full" inputStyleClass="w-full p-3 md:w-30rem  min-w-full"></p-password>
+                            <p-password id="password1" formControlName="password" placeholder="Password" [toggleMask]="true" [feedback]="false" styleClass="mb-2 min-w-full" inputStyleClass="w-full p-3 min-w-full"></p-password>
                             @if (validateInput('password')) {
                                 <span class="block text-red-500">Este campo es requerido</span>
                             }
                         </div>
-
                         <!-- <div class="flex align-items-center justify-content-between mb-5 gap-5">
                             <div class="flex align-items-center">
                                 <p-checkbox id="rememberme1" [binary]="true" styleClass="mr-2"></p-checkbox>
@@ -39,9 +34,7 @@
                             <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
                         </div> -->
                         <button pButton pRipple label="Sign In" class="w-full p-3 text-xl" type="submit" style="background-color: rgb(46, 32, 7); border-color: rgb(46, 32, 7);"></button>
-
                     </form>
-
                 </div>
             </div>
         </div>

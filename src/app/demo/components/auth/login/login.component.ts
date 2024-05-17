@@ -11,14 +11,15 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
-    styles: [`
-        :host ::ng-deep .pi-eye,
-        :host ::ng-deep .pi-eye-slash {
-            transform:scale(1.6);
-            margin-right: 1rem;
-            color: var(--primary-color) !important;
-        }
-    `],
+    // styles: [`
+    //     :host ::ng-deep .pi-eye,
+    //     :host ::ng-deep .pi-eye-slash {
+    //         transform:scale(1.6);
+    //         margin-right: 1rem;
+    //         color: var(--primary-color) !important;
+    //     }
+    // `],
+    styleUrls: ['./login.component.css'],
     standalone: true,
     imports: [ReactiveFormsModule, InputTextModule, PasswordModule, CheckboxModule, ButtonModule]
 })
@@ -38,7 +39,7 @@ export class LoginComponent {
             this.form.markAsDirty();
             return;
         }
-    
+
         this.authService.login({
             email: this.form.get('email').value,
             password: this.form.get('password').value,
