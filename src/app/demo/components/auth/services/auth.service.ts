@@ -5,6 +5,7 @@ import { LoginData } from '../api';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { User } from '../api/user';
+import { er } from '@fullcalendar/core/internal-common';
 
 @Injectable({
   providedIn: 'root'
@@ -13,27 +14,28 @@ export class AuthService {
 
   user = new BehaviorSubject<User | null>(null);
 
-  constructor(private http: HttpClient, private router: Router) { 
+  constructor(private http: HttpClient, private router: Router) {
     const user = localStorage.getItem('user');
     if(user){
       this.user.next(JSON.parse(user).user);
     }
-
   }
 
   get user$(){
-    return this.user.asObservable(); 
+    return this.user.asObservable();
   }
   get userValue (){
     return this.user.getValue();
   }
 
+  public localUser(response: any){
+    localStorage.setItem('user', JSON.stringify(response));
+    this.user.next(response);
+    this.router.navigate(['/backoffice/inventario/'], {replaceUrl: true});
+  }
+
   public login(data: LoginData){
-    this.http.post(`${environment.api}/login`, data).subscribe((response: any) => {
-      localStorage.setItem('user', JSON.stringify(response));
-      this.user.next(response);
-      this.router.navigate(['/backoffice/inventario/'], {replaceUrl: true});
-    });
+    return this.http.post(`${environment.api}/login`, data)
   }
 
   public logout(){
@@ -45,5 +47,5 @@ export class AuthService {
   public isAuthenticated(){
     return !!localStorage.getItem('user');
   }
-  
+
 }

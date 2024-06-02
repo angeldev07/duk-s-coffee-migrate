@@ -21,7 +21,7 @@ import { Product } from 'src/app/inventario/api';
         ButtonModule
     ],
     template: `
-    
+
         <section class="p-4">
             <!-- header de la factura -->
             <div class="flex justify-content-between ">
@@ -106,14 +106,14 @@ import { Product } from 'src/app/inventario/api';
             </div>
 
         </section>
-    
+
     `,
     styles: `
         td, tr, th {
             text-align: center;
         }
 
-    
+
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -133,16 +133,17 @@ export class BillComponent {
         return this.products.reduce((acc: number, product) => acc + (product.basePrice * product.quantity), 0)
     }
 
+    //Amount es la cantidad de productos que se van a comprar y el total es el precio total de la compra
     onSave(){
         this.onSaveBill.emit(
             {
-                customer: this.customer, 
+                customer: this.customer,
                 products: this.products.map(product => (
                     {
                         id:-1,
-                        productId: product.id, 
-                        quantity: product.quantity, 
-                        amount: product.basePrice * product.quantity 
+                        productId: product.id,
+                        amount: product.quantity,
+                        total: product.basePrice * product.quantity
                     }
                 ))
             }
@@ -151,10 +152,10 @@ export class BillComponent {
 
 
     get disableButton(){
-        return (this.products.length === 0 || !this.customer) || 
+        return (this.products.length === 0 || !this.customer) ||
                (this.products.some(product => product.quantity === 0))
     }
-               
+
 
 
  }

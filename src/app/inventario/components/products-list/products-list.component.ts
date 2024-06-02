@@ -46,7 +46,7 @@ import { environment } from 'src/environments/environment';
                     <th pSortableColumn="amount">Cantidad <p-sortIcon field="amount" /></th>
                     <th pSortableColumn="active">Activo <p-sortIcon field="active" /></th>
                     <th pSortableColumn="category.name">
-                      Categoria 
+                      Categoria
                       <p-sortIcon field="category.name" />
                     </th>
                     @if (actionsEnabled) {
@@ -118,7 +118,7 @@ export class ProductsListComponent implements OnInit {
     selectedProducts!: any;
     messages: Message[] | undefined = [{ severity: 'info', summary: 'Lista vacia', detail: 'No hay productos por mostrar' }];;
 
-    constructor(private http: HttpClient) {}  
+    constructor(private http: HttpClient) {}
 
     ngOnInit(): void {
 
