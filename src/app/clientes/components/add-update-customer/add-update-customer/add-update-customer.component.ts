@@ -34,7 +34,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
   template: `
     <p-dialog
         header="{{
-            customer ? 'Actualizar Cliente' : 'Añadir Cliente Nuevo'
+            customer ? 'Actualizar Datos del Cliente' : 'Añadir Cliente Nuevo'
         }}"
         [modal]="true"
         [draggable]="false"
@@ -51,7 +51,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
         >
             <div class="mb-3">
                 <label for="name" class="font-semibold block mb-2"
-                    >Nombre</label
+                    >Nombre del cliente</label
                 >
                 <input
                     id="name"
@@ -68,7 +68,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
             </div>
             <div class="mb-3">
                 <label for="lastName" class="font-semibold block mb-2"
-                    >Apellido</label
+                    >Apellido del cliente</label
                 >
                 <input
                     id="lastName"
@@ -85,7 +85,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
             </div>
             <div class="mb-3">
                 <label for="email" class="font-semibold block mb-2"
-                    >Correo</label
+                    >Correo del cliente</label
                 >
                 <input
                     id="email"
@@ -105,7 +105,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
             </div>
             <div class="mb-3">
                 <label for="cardId" class="font-semibold block mb-2"
-                    >Documento de Identidad</label
+                    >Documento de Identidad del cliente</label
                 >
                 <p-inputNumber
                     id="cardId"
@@ -122,7 +122,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
             </div>
             <div class="mb-3">
                 <label for="gender" class="font-semibold block mb-2"
-                    >Género</label
+                    >Género del cliente</label
                 >
                 <div *ngFor="let gender of genders" class="field-checkbox">
                     <input type="radio" [id]="gender.key" [value]="gender.key" formControlName="gender">
@@ -136,7 +136,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
             </div>
             <div class="mb-3">
                 <label for="birthDay" class="font-semibold block mb-2"
-                    >Fecha Nacimiento</label
+                    >Fecha Nacimiento del cliente</label
                 >
                 <p-calendar
                     formControlName="birthDay"
@@ -153,7 +153,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
             </div>
             <div class="mb-3">
                 <label for="lastVisit" class="font-semibold block mb-2"
-                    >Fecha ultima visita</label
+                    >Fecha ultima visita del cliente</label
                 >
                 <p-calendar formControlName="lastVisit" dateFormat="dd/mm/yy"></p-calendar>
                 @if (validateInput('lastVisit')) {
@@ -164,7 +164,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
             </div>
             <div class="mb-3">
                 <label for="address" class="font-semibold block mb-2"
-                    >Dirección Residencia</label
+                    >Dirección Residencia del cliente</label
                 >
                 <input
                     id="address"
@@ -181,7 +181,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
             </div>
             <div class="mb-3">
                 <label for="phone" class="font-semibold block mb-2"
-                    >Teléfono</label
+                    >Teléfono del cliente</label
                 >
                 <p-inputNumber
                     id="phone"
@@ -198,7 +198,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
             </div>
             <div class="mb-3">
                 <label for="active" class="font-semibold block mb-2"
-                    >Activo</label
+                    >¿Activar cliente?</label
                 >
                 <p-inputSwitch formControlName="active"></p-inputSwitch>
             </div>
