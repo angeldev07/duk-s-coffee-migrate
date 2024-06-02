@@ -61,14 +61,6 @@ export class LoginComponent {
 
     }
 
-    showDialog() {
-        this.visible = true;
-    }
-
-    get email() {
-        return this.form.get('email');
-      }
-
     public validateInput(input: string) {
         return this.form.get(input).errors?.['required'] && this.form.get(input).touched;
     }

@@ -8,14 +8,14 @@ import {
     type OnInit,
 } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { FileUploadModule } from 'primeng/fileupload';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { Customers } from 'src/app/clientes/api/customer';
-import { EmailValidator } from 'src/app/ordenes/directives/check-email.';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @Component({
   selector: 'app-add-update-customer',
@@ -28,19 +28,20 @@ import { EmailValidator } from 'src/app/ordenes/directives/check-email.';
     FileUploadModule,
     InputSwitchModule,
     DropdownModule,
-    CalendarModule
+    CalendarModule,
+    InputNumberModule
   ],
   template: `
     <p-dialog
         header="{{
-            customer ? 'Actualizar cliente' : 'Agregar nuevo cliente'
+            customer ? 'Actualizar Cliente' : 'Añadir Cliente Nuevo'
         }}"
         [modal]="true"
         [draggable]="false"
         [resizable]="false"
         [(visible)]="visible"
         (onHide)="visibleChange.emit(false)"
-        [style]="{ width: '50rem' }"
+        [style]="{ width: '35rem' }"
         [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
     >
         <form
@@ -94,20 +95,23 @@ import { EmailValidator } from 'src/app/ordenes/directives/check-email.';
                     class="w-full"
                 />
                 @if (validateInput('email')) {
-                <span class="text-red-500 text-md block p-2"
-                     >El correo es obligatorio ó ya en uso</span
-                >
+                    <span class="text-red-500 text-md block p-2"
+                        >El correo es obligatorio</span>
+                }
+                @if (validateEmail('email')) {
+                    <span class="text-red-500 text-md block p-2">
+                        El correo no es válido</span>
                 }
             </div>
             <div class="mb-3">
                 <label for="cardId" class="font-semibold block mb-2"
                     >Documento de Identidad</label
                 >
-                <input
+                <p-inputNumber
                     id="cardId"
                     type="text"
                     formControlName="cardId"
-                    pInputText
+                    [useGrouping]="false"
                     class="w-full"
                 />
                 @if (validateInput('cardId')) {
@@ -134,7 +138,13 @@ import { EmailValidator } from 'src/app/ordenes/directives/check-email.';
                 <label for="birthDay" class="font-semibold block mb-2"
                     >Fecha Nacimiento</label
                 >
-                <p-calendar formControlName="birthDay" dateFormat="dd/mm/yy"></p-calendar>
+                <p-calendar
+                    formControlName="birthDay"
+                    [maxDate]="minDate"
+                    dateFormat="dd/mm/yy"
+                >
+
+                </p-calendar>
                 @if (validateInput('birthDay')) {
                 <span class="text-red-500 text-md block p-2"
                      >La fecha es obligatoria</span
@@ -173,12 +183,12 @@ import { EmailValidator } from 'src/app/ordenes/directives/check-email.';
                 <label for="phone" class="font-semibold block mb-2"
                     >Teléfono</label
                 >
-                <input
+                <p-inputNumber
                     id="phone"
                     type="text"
                     formControlName="phone"
-                    pInputText
-                    class="w-full"
+                    [useGrouping]="false"
+                    style="width: 100%"
                 />
                 @if (validateInput('phone')) {
                 <span class="text-red-500 text-md block p-2"
@@ -220,22 +230,9 @@ export class AddUpdateCustomerComponent implements OnInit {
     @Output() visibleChange = new EventEmitter<boolean>();
     @Output() saveCustomer = new EventEmitter<Customers>();
 
-    customerForm = this.fb.group({
-        name: ['', [Validators.required]],
-        lastName: ['', [Validators.required]],
-        email: ["", [Validators.required], [this.emailValidator.validate.bind(this.emailValidator)]],
-        cardId: ['', [Validators.required]],
-        gender: ['', [Validators.required]],
-        birthDay: [new Date(), [Validators.required]],
-        lastVisit: [new Date(), [Validators.required]],
-        address: ['', [Validators.required]],
-        phone: ['', [Validators.required]],
-        active: [true, [Validators.required]],
-    });
-
-    genders = [ { key: 'M', name: 'Masculino' }, { key: 'F', name: 'Femenino' } ];
-
-    constructor(private fb: FormBuilder, private emailValidator: EmailValidator) {}
+    date: Date | undefined;
+    customerForm: FormGroup;
+    minDate: Date | undefined;
 
     ngOnInit(): void {
         if(!!this.customer) {
@@ -245,7 +242,6 @@ export class AddUpdateCustomerComponent implements OnInit {
                 email: this.customer.email,
                 cardId: this.customer.cardId,
                 gender: this.customer.gender,
-                birthDay: this.customer.birthDay,
                 lastVisit: this.customer.lastVisit,
                 address: this.customer.address,
                 phone: this.customer.phone,
@@ -254,11 +250,43 @@ export class AddUpdateCustomerComponent implements OnInit {
         }
     }
 
+
+    genders = [ { key: 'M', name: 'Masculino' }, { key: 'F', name: 'Femenino' } ];
+
+    constructor(private fb: FormBuilder) {
+
+        const today = new Date();
+        const year = today.getFullYear() - 18;
+        const month = today.getMonth();
+        const day = today.getDate();
+        this.minDate = new Date(year, month, day)
+
+        this.customerForm = this.fb.group({
+            name: ['', [Validators.required]],
+            lastName: ['', [Validators.required]],
+            email: ['', [Validators.required, Validators.email]],
+            cardId: ['', [Validators.required]],
+            gender: ['', [Validators.required]],
+            birthDay: [this.minDate, [Validators.required]],
+            lastVisit: [new Date(), [Validators.required]],
+            address: ['', [Validators.required]],
+            phone: ['', [Validators.required]],
+            active: [true, [Validators.required]],
+        });
+    }
+
+
+
+
     public validateInput(input: string) {
         return (
-            this.customerForm.get(input).invalid &&
+            this.customerForm.get(input).errors?.['required'] &&
             this.customerForm.get(input).touched
         );
+    }
+
+    public validateEmail(input: string) {
+        return this.customerForm.get(input).errors?.['email'] && this.customerForm.get(input).touched;
     }
 
     public submitCustomer() {
