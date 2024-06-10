@@ -13,7 +13,7 @@ import { TableModule } from 'primeng/table';
         MessagesModule
     ],
     template: `
-    @if (products.length > 0) {
+    <!-- @if (products.length > 0) { -->
       <p-table
             [value]="products"
             [tableStyle]="{ 'min-width': '50rem' }"
@@ -24,6 +24,12 @@ import { TableModule } from 'primeng/table';
             [rowsPerPageOptions]="[5, 10, 20]"
             [globalFilterFields]="['category.name']"
         >
+            <ng-template pTemplate="emptymessage">
+              <div class="p-fluid w-full">
+                <p-messages [value]="messages" [enableService]="false" [closable]="false" ></p-messages>
+              </div>
+            </ng-template>
+            
             <ng-template pTemplate="header">
                 <tr>
                     <th pSortableColumn="id">ID <p-sortIcon field="id" /></th>
@@ -59,9 +65,9 @@ import { TableModule } from 'primeng/table';
                 }
             </ng-template>
         </p-table>
-    } @else {
+    <!-- } @else {
       <p-messages [value]="messages" [enableService]="false" [closable]="false"></p-messages>
-    }
+    } -->
     `,
     styles: `
     :host {

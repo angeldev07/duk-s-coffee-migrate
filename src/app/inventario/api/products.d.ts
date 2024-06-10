@@ -12,4 +12,6 @@ export interface Product {
     amount:     number;
     active:    boolean;
     category:   Category | null;
+    iva?:       number;
+    stock?:     number;
 }

@@ -32,4 +32,12 @@ export class CategoryService {
     return this.http.put(`${environment.api}/categories/update/${category.id}`, category)
   }
 
+  activeDeactivateByList(categories: number[], option: string){
+    return this.http.post(`${environment.api}/categories/on-batches?option=${option}`, {productsIds: categories})
+  }
+
+  deleteCategoriesByList(categories: number[]){
+    return this.http.post(`${environment.api}/categories/delete`,  { productsIds: categories })
+  }
+
 }

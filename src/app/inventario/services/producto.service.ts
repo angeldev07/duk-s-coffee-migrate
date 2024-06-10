@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Product } from '../api';
@@ -30,6 +30,14 @@ export class ProductoService {
     }
 
     deleteProductsByList(products: number[]){
-      return this.http.post(`${environment.api}/products/delete-products`, products)
+      return this.http.post(`${environment.api}/products/delete`,  { productsIds: products })
+    }
+
+    deactivateByList(products: number[]){
+      return this.http.post(`${environment.api}/products/deactivate-batches`, {productsIds: products})
+    }
+
+    activateByList(products: number[]){
+      return this.http.post(`${environment.api}/products/activate-batches`, {productsIds: products})
     }
 }

@@ -3,6 +3,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     EventEmitter,
+    inject,
     Input,
     Output,
     type OnInit,
@@ -15,6 +16,9 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumber } from 'primeng/inputnumber';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { TooltipModule } from 'primeng/tooltip';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-add-update-product',
@@ -27,11 +31,13 @@ import { InputNumber } from 'primeng/inputnumber';
         FileUploadModule,
         InputSwitchModule,
         DropdownModule,
+        InputNumberModule,
+        TooltipModule
     ],
     template: `
         <p-dialog
             header="{{
-                product ? 'Actualizar producto' : 'Agregar nuevo producto'
+                product && product.id != -1 ? 'Actualizar producto' : 'Agregar nuevo producto'
             }}"
             [modal]="true"
             [draggable]="false"
@@ -45,54 +51,116 @@ import { InputNumber } from 'primeng/inputnumber';
                 [formGroup]="productForm"
                 class="pt-4 "
                 (ngSubmit)="submitProduct()"
+                class="formgrid grid"
             >
-                <div class="mb-3">
-                    <label for="name" class="font-semibold block mb-2"
-                        >Nombre</label
-                    >
-                    <input
-                        id="name"
-                        type="text"
-                        formControlName="name"
-                        pInputText
-                        class="w-full"
-                    />
-                    @if (validateInput('name')) {
-                    <span class="text-red-500 text-md block p-2"
-                        >El nombre es obligatorio</span
-                    >
-                    }
+                <div class="mb-3 field col-12 grid p-fluid">
+                    <div class="mb-3 col">
+                        <label for="name" class="font-semibold block mb-2"
+                            >Nombre</label
+                        >
+                        <input
+                            id="name"
+                            type="text"
+                            formControlName="name"
+                            pInputText
+                            class="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty': validateInput('name')}"
+                            pTooltip="Nombre del producto"
+                            tooltipPosition="top"
+                        />
+                        @if (validateInput('name')) {
+                        <span class="text-red-500 text-md block p-2"
+                            >El nombre es obligatorio</span
+                        >
+                        }
+                    </div>
+
+                    <div class="mb-3 col">
+                        <label for="name" class="font-semibold block mb-2"
+                            >Stock</label
+                        >
+                        <input
+                            id="stock"
+                            type="text"
+                            formControlName="stock"
+                            pInputText
+                            class="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty': validateInput('stock')}"
+                            pTooltip="Cantidad de productos en stock"
+                            tooltipPosition="top"
+                        />
+                        @if (validateInput('stock')) {
+                        <span class="text-red-500 text-md block p-2"
+                            >El stock es obligatorio y minimo 1 unidad.</span
+                        >
+                        }
+                    </div>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 field col p-fluid">
                     <label for="basePrice" class="font-semibold block mb-2"
-                        >Precio base</label
+                        >Precio base (en COP)</label
                     >
-                    <input
-                        id="basePrice"
-                        type="number"
+                    <p-inputNumber 
                         formControlName="basePrice"
-                        pInputText
-                        class="w-full"
-                    />
+                        inputId="basePrice" 
+                        mode="currency" 
+                        currency="COP" 
+                        locale="es-CO"
+                        pTooltip="Precio sin IVA en pesos colombianos"
+                        tooltipPosition="top"
+                        [ngClass]="{'ng-invalid ng-dirty': validateInput('basePrice')}"
+                         />
                     @if (validateInput('basePrice')) {
                     <span class="text-red-500 text-md block p-2"
-                        >El precio base es obligatorio y mayor a $2500</span
+                        >El precio base es obligatorio</span
+                    >
+                    }
+                </div>
+                <div class="mb-3 field col p-fluid">
+                    <label for="iva" class="font-semibold block mb-2"
+                        >IVA</label
+                    >
+                    <p-inputNumber 
+                        formControlName="iva"
+                        inputId="iva" 
+                        prefix="%" 
+                        [min]="0"
+                        [max]="19"
+                        pTooltip="Porcentaje de IVA del producto"
+                        tooltipPosition="top"
+                        [ngClass]="{'ng-invalid ng-dirty': validateInput('iva')}"
+                        />
+                    @if (validateInput('iva')) {
+                    <span class="text-red-500 text-md block p-2"
+                        >Valor incorrecto.</span
                     >
                     }
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 field col-12">
                     <label for="active" class="font-semibold block mb-2"
                         >Categoria</label
                     >
-                    <p-dropdown
-                        formControlName="category"
-                        [options]="categories"
-                        optionLabel="name"
-                        placeholder="Seleccione la categoria"
-                        [styleClass]="'w-full'"
-                    ></p-dropdown>
+                    <div class="flex p-fluid gap-2">
+                        <div class="p-fluid flex-1">
+                            <p-dropdown
+                                formControlName="category"
+                                [options]="categories"
+                                optionLabel="name"
+                                placeholder="Seleccione la categoria"
+                                [styleClass]="'w-full flex-1'"
+                                pTooltip="Categoria del producto"
+                                tooltipPosition="top"
+                                [ngClass]="{'ng-invalid ng-dirty': validateInput('category')}"
+                            ></p-dropdown>
+                        </div>
+                        <p-button 
+                            label="Agregar" 
+                            icon="pi pi-plus" iconPos="right" 
+                            tooltipPosition="top" pTooltip="Agregar nueva categoria"
+                            (onClick)="onAddNewCategory()" />
+                    </div>
                     @if (validateInput('category')) {
                     <span class="text-red-500 text-md block p-2"
                         >La categoria es obligatoria</span
@@ -100,15 +168,20 @@ import { InputNumber } from 'primeng/inputnumber';
                     }
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 field col-12">
                     <label for="img" class="font-semibold block mb-2"
                         >Seleccionar imagen</label
                     >
-                    <input
-                        type="file"
-                        accept="image/*"
-                        (input)="getImg($event)"
-                    />
+                    <div class="p-4 border-dashed border-gray border-round flex justify-content-center"
+                         pTooltip="Imagen del producto (.jpg, .png, .wepg, .jpeg)" tooltipPosition="top"
+                         [ngClass]="{'border-green-300': !imgError && imgTouch && img}">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            (input)="getImg($event)"
+                        />
+
+                    </div>
                     @if (imgError) {
                     <span class="text-red-500 text-md block p-2"
                         >La imagen es obligatoria</span
@@ -116,9 +189,9 @@ import { InputNumber } from 'primeng/inputnumber';
                     }
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 field col-12">
                     <label for="active" class="font-semibold block mb-2"
-                        >Activo</label
+                    pTooltip="Indica si el producto esta activo para vender" tooltipPosition="top">Activo</label
                     >
                     <p-inputSwitch formControlName="active"></p-inputSwitch>
                 </div>
@@ -129,7 +202,7 @@ import { InputNumber } from 'primeng/inputnumber';
                         icon="pi pi-check"
                         iconPos="right"
                         (onClick)="submitProduct()"
-                        label="{{ product ? 'Actualizar' : 'Guardar' }}"
+                        label="{{  product && product.id != -1  ? 'Actualizar' : 'Guardar' }}"
                         pAutoFocus
                         [autofocus]="true"
                     ></p-button>
@@ -156,10 +229,15 @@ export class AddUpdateProductComponent implements OnInit {
         name: ['', [Validators.required]],
         basePrice: [0, [Validators.required, Validators.min(2500)]],
         active: [true, [Validators.required]],
-        category: ['', [Validators.required]],
+        category: [{} as Category, [Validators.required]],
+        iva: [0, [Validators.required, Validators.min(0), Validators.max(19)]],
+        stock: [1, [Validators.required, Validators.min(1)]],
     });
     img: string | null = null;
     imgError = false;
+    imgTouch = false;
+
+    router = inject(Router)
 
     constructor(private fb: FormBuilder) {}
 
@@ -169,7 +247,9 @@ export class AddUpdateProductComponent implements OnInit {
                 name: this.product.name,
                 basePrice: this.product.basePrice,
                 active: this.product.active,
-                category: this.product.category ? this.product.category.name : '',
+                category: this.product.category ? this.product.category : {} as Category,
+                iva: this.product.iva || 0,
+                stock: this.product.stock || 1,
             });
             this.img = this.product.profileImg;
         }
@@ -206,13 +286,17 @@ export class AddUpdateProductComponent implements OnInit {
                 JSON.stringify(this.productForm.get('category').value)
             ) as Category,
             profileImg: this.img || null,
+            iva: Number(this.productForm.get('iva').value),
+            stock: Number(this.productForm.get('stock').value),
         };
 
         this.saveProduct.emit(product);
         this.visibleChange.emit(false)
     }
+
     getImg($event: any) {
         const file = $event.target.files[0];
+        this.imgTouch = true;
         
         if (file) {
             const reader = new FileReader();
@@ -224,5 +308,31 @@ export class AddUpdateProductComponent implements OnInit {
             reader.readAsDataURL(file);
             this.imgError = false;
         }
+    }
+
+    onAddNewCategory(){
+        const product: Product = {
+            id: Number(this.product?.id) || -1,
+            name: this.productForm.get('name').value,
+            basePrice: Number(this.productForm.get('basePrice').value),
+            amount: 0,
+            active: Boolean(this.productForm.get('active').value),
+            category: JSON.parse(
+                JSON.stringify(this.productForm.get('category').value)
+            ) as Category,
+            profileImg: this.img || null,
+            iva: Number(this.productForm.get('iva').value),
+            stock: Number(this.productForm.get('stock').value),
+        };
+
+        this.router.navigate(['/backoffice/inventario/categorias'], 
+        { 
+            queryParams: { 
+                    add: true, 
+                    newProduct: this.product ? false : true,
+                    redirectTo: this.router.url,
+                    ...product,
+                }, 
+        })
     }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { AuthService } from '../services/auth.service';
 import { LoginData } from '../api';
@@ -11,6 +11,7 @@ import { EmailValidator } from '../../../../ordenes/directives/check-email.';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -36,7 +37,17 @@ export class LoginComponent {
         password: ['', [Validators.required]],
     });
 
-    constructor(public layoutService: LayoutService, private authService: AuthService,  private fb: FormBuilder) { }
+
+
+    constructor(public layoutService: LayoutService, private authService: AuthService,  private fb: FormBuilder, private router: Router) { }
+
+    ngOnInit(): void {
+        //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+        //Add 'implements OnInit' to the class.
+        if(this.authService.isAuthenticated()) {
+            this.router.navigate(['/backoffice/inventario/'], {replaceUrl: true});
+        }
+    }
 
     public doLogin() {
         if (this.form.invalid) {

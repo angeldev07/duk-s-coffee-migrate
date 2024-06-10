@@ -45,7 +45,7 @@ export class AuthService {
   }
 
   public isAuthenticated(){
-    return !!localStorage.getItem('user');
+    return localStorage.getItem('user') != undefined   || this.user.getValue() !== null;
   }
 
 }
