@@ -122,10 +122,9 @@ export class OrderComponent implements OnInit {
     }
 
     saveNewOrder(orden: any) {
-
         this.orderService.saveOrder(orden).subscribe({
             next: () => {
-                this.getOrdersList();   
+                this.getOrdersList();
                 this.messageService.clear();
                 this.messageService.add({ severity: 'success', summary: 'Agregado', detail: 'Se ha registrado el cliente con éxito' });
             },

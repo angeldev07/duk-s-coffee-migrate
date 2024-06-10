@@ -50,10 +50,10 @@ import { FormsModule } from '@angular/forms';
                         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                     </th>
                     <th pSortableColumn="id">ID <p-sortIcon field="id" /></th>
-                    <th pSortableColumn="name">Nombre <p-sortIcon field="name" /></th>
+                    <th pSortableColumn="name">Nombres <p-sortIcon field="name" /></th>
                     <th pSortableColumn="lastName">Apellidos <p-sortIcon field="lastName" /></th>
                     <th pSortableColumn="email">Correo <p-sortIcon field="email" /></th>
-                    <th pSortableColumn="cardId">Documento <p-sortIcon field="cardId" /></th>
+                    <th pSortableColumn="cardId">Documento (C.C.) <p-sortIcon field="cardId" /></th>
                     <th pSortableColumn="gender">Género <p-sortIcon field="gender" /></th>
                     <th pSortableColumn="birthDay">Fecha Nacimiento <p-sortIcon field="birthDay" /></th>
                     <th pSortableColumn="lastVisit">Última Visita <p-sortIcon field="lastVisit" /></th>

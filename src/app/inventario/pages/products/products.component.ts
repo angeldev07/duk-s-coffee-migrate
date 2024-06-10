@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  inject,
   signal,
   type OnInit
 } from '@angular/core';
@@ -10,11 +11,14 @@ import { TableModule } from 'primeng/table';
 import { AddUpdateProductComponent } from '../../components/add-update-product/add-update-product.component';
 import { ProductsListComponent } from '../../components/products-list/products-list.component';
 import { Category, Product } from '../../api';
-import { DropdownModule } from 'primeng/dropdown';
+import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { ProductoService } from '../../services/producto.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { getProductByParamsQuery } from '../categories/helpers';
 
 // TODO: Implementar la funcionalidad de eliminar productos por lote
 @Component({
@@ -52,11 +56,12 @@ import { MessageService } from 'primeng/api';
                     <div class="field col md:col-6 flex flex-column">
                         <p class="text-md mb-0">Accion por lote</p>
                         <p-dropdown
-                            [options]="[{ name: 'Eliminar' }]"
+                            [options]="[{ name: 'Eliminar' }, {name: 'Deshabilitar'}, {name: 'Activar'}]"
                             optionLabel="name"
                             placeholder="Accion por lote"
                             [styleClass]="'w-full'"
                             (onChange)="deleteProductsList($event)"
+                            [(ngModel)]="selectedBathOption"
                         ></p-dropdown>
                     </div>
                     <div class="field col md:col-6 flex flex-column">
@@ -122,6 +127,12 @@ export class ProductsComponent implements OnInit {
     categories = signal<Category[]>([{ id: -1, name: 'Todo', active: true }]);
     selectedCategory = signal<Category | null>(null);
     selectedProduct = signal<Product | null | number[]>(null);
+    selectedBathOption: any
+
+    activedRouterService = inject(ActivatedRoute)
+    router = inject(Router)
+
+    cd = inject(ChangeDetectorRef)
     
 
     constructor(
@@ -132,7 +143,9 @@ export class ProductsComponent implements OnInit {
     ngOnInit(): void {
         this.getProducts();
         this.getCategories();
+        this.loadQueryParams()
     }
+
 
     get activeProducts() {
         return this.productList().filter((product) => product.active);
@@ -178,7 +191,9 @@ export class ProductsComponent implements OnInit {
     }
 
     saveProduct(producto: Product) {
-        if (producto.id === -1) {
+        console.log(producto);
+        
+        if (producto.id == -1) {
             this.saveNewProduct(producto);
         } else {
             this.updateProduct(producto);
@@ -193,6 +208,8 @@ export class ProductsComponent implements OnInit {
             active: product.active,
             category: product.category,
             profileImg: product.profileImg,
+            iva: product.iva,
+            stock: product.stock,
         };
 
         this.productService.saveProduct(data).subscribe({
@@ -242,21 +259,73 @@ export class ProductsComponent implements OnInit {
       this.selectedProduct.set(event);
     }
 
-    deleteProductsList(products: number[]) {
-        this.productService.deleteProductsByList(products).subscribe({
+    deleteProductsList(event: DropdownChangeEvent) {
+        
+        const products = this.selectedProduct() as number[]
+        
+        if(products.length === 0) {
+            this.messageService.clear();
+            this.messageService.add({ severity: 'error', summary: 'Productos no seleccionados', detail: 'No se ha seleccionado ningun producto para ejecutar la accion' });
+            return
+        }
+
+        if(this.selectedBathOption.name === 'Eliminar') {
+            this.productService.deleteProductsByList(products).subscribe({
+                next: () => {
+                    this.messageService.clear();
+                    this.messageService.add({ severity: 'success', summary: 'Elimados', detail: 'Se han eliminado los productos seleccionados con éxito' });
+                    this.getProducts();
+                },
+                error: (err) => {
+                  this.messageService.clear();
+                  this.messageService.add({ severity: 'error', summary: 'Error al eliminar', detail: 'No se ha podido ejecutar la accion deseada.' });
+                },
+            });
+        }
+
+       if( this.selectedBathOption.name === 'Deshabilitar') {
+        this.productService.deactivateByList(products).subscribe({
             next: () => {
+                this.messageService.clear();
+                this.messageService.add({ severity: 'success', summary: 'Productos desactivados', detail: 'Se han desactivado los productos seleccionados con éxito' });
                 this.getProducts();
             },
             error: (err) => {
               this.messageService.clear();
-              this.messageService.add({ severity: 'success', summary: 'Elimados', detail: 'Se han eliminado los productos seleccionados con éxito' });
-              console.log(err);
+              this.messageService.add({ severity: 'error', summary: 'Error al eliminar', detail: 'No se ha podido ejecutar la accion deseada.' });
             },
         });
+       }
+
+       if( this.selectedBathOption.name === 'Activar') {
+        this.productService.activateByList(products).subscribe({
+            next: () => {
+                this.messageService.clear();
+                this.messageService.add({ severity: 'success', summary: 'Productos activados', detail: 'Se han activado los productos seleccionados con éxito' });
+                this.getProducts();
+            },
+            error: (err) => {
+              this.messageService.clear();
+              this.messageService.add({ severity: 'error', summary: 'Error al eliminar', detail: 'No se ha podido ejecutar la accion deseada.' });
+            },
+        });
+       }
+        this.selectedBathOption = null
     }
 
     clear(event: boolean) {
        this.openAddProductDialog = false;
        this.selectedProduct.set(null)
+       this.router.navigate(['/backoffice/inventario/productos'])
+    }
+
+    loadQueryParams() {
+        this.activedRouterService.queryParams.subscribe((params) => {
+            if(Object.keys(params).length === 0) return
+
+            this.selectedProduct.set(getProductByParamsQuery(params))
+            this.openAddProductDialog = true
+            this.cd.markForCheck()
+        }).unsubscribe()
     }
 }

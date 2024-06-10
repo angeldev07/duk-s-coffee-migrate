@@ -19,6 +19,7 @@ export class OrdenService {
     }
 
     saveOrder(orders: any) {
+        console.log(orders)
         return this.http.post(`${environment.api}/orders/create`, orders)
     }
 }

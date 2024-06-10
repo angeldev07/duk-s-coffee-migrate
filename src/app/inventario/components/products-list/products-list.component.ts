@@ -15,11 +15,12 @@ import { MessagesModule } from 'primeng/messages';
 import { Message } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
     selector: 'app-products-list',
     standalone: true,
-    imports: [CommonModule, TableModule, ButtonModule,MessagesModule],
+    imports: [CommonModule, TableModule, ButtonModule,MessagesModule, InputTextModule],
     template: `
         @if (products.length > 0) {
         <p-table
@@ -34,7 +35,21 @@ import { environment } from 'src/environments/environment';
             (onHeaderCheckboxToggle)="showDeletedProducts()"
             [rowsPerPageOptions]="[5, 10, 20]"
             [globalFilterFields]="['category.name']"
+            #dt2
         >
+        <ng-template pTemplate="caption">
+            <div class="flex">
+                <p-iconField iconPosition="left" class="ml-auto">
+                    <input 
+                        pInputText 
+                        type="text" 
+                        (input)="dt2.filterGlobal($event.target.value, 'contains')" 
+                        placeholder="Buscar por nombre"
+                        pTooltip="Buscar por nombre" tooltipPosition="top" 
+                        />
+                </p-iconField>
+            </div>
+        </ng-template>
             <ng-template pTemplate="header">
                 <tr>
                     <th style="width: 3rem">
@@ -46,7 +61,7 @@ import { environment } from 'src/environments/environment';
                     <th pSortableColumn="amount">Cantidad <p-sortIcon field="amount" /></th>
                     <th pSortableColumn="active">Activo <p-sortIcon field="active" /></th>
                     <th pSortableColumn="category.name">
-                      Categoria 
+                      Categoria
                       <p-sortIcon field="category.name" />
                     </th>
                     @if (actionsEnabled) {
@@ -118,7 +133,7 @@ export class ProductsListComponent implements OnInit {
     selectedProducts!: any;
     messages: Message[] | undefined = [{ severity: 'info', summary: 'Lista vacia', detail: 'No hay productos por mostrar' }];;
 
-    constructor(private http: HttpClient) {}  
+    constructor(private http: HttpClient) {}
 
     ngOnInit(): void {
 

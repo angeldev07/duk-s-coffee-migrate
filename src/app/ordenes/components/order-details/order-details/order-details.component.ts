@@ -38,7 +38,7 @@ import { Orders } from 'src/app/ordenes/api/order';
               <div class="bg-gray-50 border-bottom-1 border-gray-100 p-3 border-round-top">
                 <span>Cliente</span>
               </div>
-              
+
               <div class="p-2 mb-3 ">
                 <span class="block p-3 bg-gray-100 font-bold text-xl border-round">
                   <i class="pi pi-user mr-2"></i>
@@ -46,7 +46,7 @@ import { Orders } from 'src/app/ordenes/api/order';
                   # {{order.client.id}}
                 </span>
               </div>
-              
+
               <div class="px-4 pb-4">
                   <p class="font-bold mb-2">
                     Email: <span class="block w-full font-normal"> {{order.client.email}} </span>
@@ -61,7 +61,7 @@ import { Orders } from 'src/app/ordenes/api/order';
             <div class="bg-white col-12 xl:col p-0 border-round">
               <div class="bg-gray-50 border-bottom-1 border-gray-100 p-3 border-round-top">
                   <span>Productos</span>
-              </div>  
+              </div>
               <div class="">
                 <app-products-list [products]="order.productList" [actionsEnabled]="false" [showAmountBill]="true"></app-products-list>
               </div>
@@ -82,7 +82,7 @@ import { Orders } from 'src/app/ordenes/api/order';
           <i class="pi pi-spin pi-spinner" style="font-size: 10rem"></i>
           </div>
         }
-        
+
       </ng-template>
 
       </p-dialog>

@@ -7,6 +7,10 @@ import { Message } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { FormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
     selector: 'app-categories-list',
@@ -17,7 +21,11 @@ import { FormsModule } from '@angular/forms';
         MessagesModule,
         ButtonModule,
         InputSwitchModule,
-        FormsModule
+        FormsModule,
+        InputTextModule,
+        IconFieldModule,
+        InputIconModule,
+        TooltipModule
     ],
     template: `
       @if (categories.length > 0) {
@@ -28,11 +36,31 @@ import { FormsModule } from '@angular/forms';
             [paginator]="true"
             [rows]="5"
             [selectionPageOnly]="true"
+            [(selection)]="selectedCategories"
+            (onRowSelect)="emitRowSelection()"
+            (onHeaderCheckboxToggle)="emitRowSelection()"
             [rowsPerPageOptions]="[5, 10, 20]"
             [globalFilterFields]="['name']"
+            #dt2
       >
+      <ng-template pTemplate="caption">
+            <div class="flex">
+                <p-iconField iconPosition="left" class="ml-auto">
+                    <input 
+                        pInputText 
+                        type="text" 
+                        (input)="dt2.filterGlobal($event.target.value, 'contains')" 
+                        placeholder="Buscar por nombre..."
+                        pTooltip="Buscar por nombre" tooltipPosition="top" 
+                        />
+                </p-iconField>
+            </div>
+        </ng-template>
       <ng-template pTemplate="header">
                 <tr>
+                    <th style="width: 3rem">
+                      <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
                     <th pSortableColumn="id">ID <p-sortIcon field="id" /></th>
                     <th pSortableColumn="name">Producto <p-sortIcon field="name" /></th>
                     <th pSortableColumn="active">Activo <p-sortIcon field="active" /></th>
@@ -42,6 +70,9 @@ import { FormsModule } from '@angular/forms';
         <ng-template pTemplate="body" let-category>
                 @if (categories.length > 0) {
                 <tr>
+                    <th>
+                      <p-tableCheckbox [value]="category"></p-tableCheckbox>
+                    </th>
                     <td>{{ category.id }}</td>
                     <td>{{ category.name }}</td>
                     <td>
@@ -85,8 +116,15 @@ export class CategoriesListComponent implements OnInit {
   @Output() updateCategory = new EventEmitter<Category>();
   @Output() activeChange = new EventEmitter<Category>();
 
+  selectedCategories: any
+  @Output() selectionCategoriesRowEvent = new EventEmitter<number[]>();
+  
+
   messages: Message[] | undefined = [{ severity: 'info', summary: 'Lista vacia', detail: 'No hay categorias por mostrar' }];;
 
     ngOnInit(): void { }
 
+    emitRowSelection(){
+      this.selectionCategoriesRowEvent.emit(this.selectedCategories.map(category => category.id))
+    }
 }
