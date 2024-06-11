@@ -78,7 +78,7 @@ import { InputTextModule } from 'primeng/inputtext';
                     <td>{{ product.id }}</td>
                     <td>{{ product.name }}</td>
                     <td>{{ product.basePrice }}</td>
-                    <td>{{ showAmountBill ?  product.amountBill : product.amount  }}</td>
+                    <td>{{ showAmountBill ?  product.amountBill : product.stock  }}</td>
                     <td>{{ product.active }}</td>
                     <td>
                         {{
