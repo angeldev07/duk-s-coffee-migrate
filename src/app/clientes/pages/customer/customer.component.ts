@@ -76,6 +76,7 @@ import { ToastModule } from 'primeng/toast';
             <app-add-update-customer
                 (saveCustomer)="saveCustomer($event)"
                 [(visible)]="openAddCustomerDialog"
+                (visibleChange)="clear($event)"
                 [customer]="selectedCustomer()"
             />
             }
@@ -220,4 +221,9 @@ export class CustomerComponent implements OnInit {
             },
         });
     }
+
+    clear(event: boolean) {
+        this.openAddCustomerDialog = false;
+        this.selectedCustomer.set(null)
+     }
 }

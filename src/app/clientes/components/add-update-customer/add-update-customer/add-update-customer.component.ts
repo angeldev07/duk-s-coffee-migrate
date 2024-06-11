@@ -34,7 +34,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
   template: `
     <p-dialog
         header="{{
-            customer ? 'Actualizar Datos del Cliente' : 'Añadir Cliente Nuevo'
+            customer && customer.id != -1 ? 'Actualizar Datos del Cliente' : 'Añadir Cliente Nuevo'
         }}"
         [modal]="true"
         [draggable]="false"
@@ -207,7 +207,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
                     icon="pi pi-check"
                     iconPos="right"
                     type="submit"
-                    label="{{ customer ? 'Actualizar' : 'Guardar' }}"
+                    label="{{ customer && customer.id != -1 ? 'Actualizar' : 'Guardar' }}"
                     pAutoFocus
                     [autofocus]="true"
                     [disabled]="customerForm.invalid"

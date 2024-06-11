@@ -13,6 +13,10 @@ export class ProductoService {
       return  this.http.get(`${environment.api}/products`)
     }
 
+    getProductsWithCategory(){
+       return this.http.get(`${environment.api}/products/withCat`)
+    }
+
     getCategories() {
       return  this.http.get(`${environment.api}/categories`)
     }
@@ -24,7 +28,7 @@ export class ProductoService {
     deleteProduct(id: number) {
       return this.http.delete(`${environment.api}/products/delete/${id}`)
     }
-    
+
     updateProduct(producto: Product) {
       return this.http.put(`${environment.api}/products/update`, producto)
     }

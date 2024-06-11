@@ -1,13 +1,14 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
 import { ProductsListComponent } from 'src/app/inventario/components/products-list/products-list.component';
 import { Orders } from 'src/app/ordenes/api/order';
 
 @Component({
   selector: 'app-order-details',
   standalone: true,
-  imports: [DialogModule, DatePipe, CurrencyPipe, ProductsListComponent],
+  imports: [DialogModule, DatePipe, CurrencyPipe, ButtonModule, ProductsListComponent],
   template: `
     <p-dialog
         [(visible)]="visible"
@@ -19,10 +20,12 @@ import { Orders } from 'src/app/ordenes/api/order';
         (onHide)="visibleChange.emit(false)">
 
       <ng-template pTemplate="headless">
-
         @if (order) {
           <section class="bg-white mb-6 border-round p-3">
-            <span>Ordenes</span>
+            <div class="flex justify-content-between flex-wrap">
+            <span class="">Ordenes</span>
+            <button type="button" pButton icon="pi pi-times" (click)="visibleChange.emit(false)" class="absolute top-0 right-0 p-button-rounded p-button-text"></button>
+            </div>
             <h2 class="text-2xl">
               <span class="inline-block  text-bluegray-400"># {{order.id}} </span>
               de {{ order.client.name+' '+order.client.lastName }}
@@ -67,7 +70,7 @@ import { Orders } from 'src/app/ordenes/api/order';
               </div>
               <div class="">
                 <div class="block w-full p-3 bg-gray-100 font-bold text-xl border-round">
-                  <span class="text block w-full">(Precio base * cantidad)</span>
+                  <span class="text block w-full">(Total con IVA incluido)</span>
                   <div>
                     <i class="pi pi-shopping-cart mr-2"></i>
                     Total: {{order.bill.totalPrice | currency}}

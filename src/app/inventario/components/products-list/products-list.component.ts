@@ -16,11 +16,12 @@ import { Message } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { InputTextModule } from 'primeng/inputtext';
+import { ActiveFormatoPipe } from 'src/app/shared/pipes/active-formato.pipe'
 
 @Component({
     selector: 'app-products-list',
     standalone: true,
-    imports: [CommonModule, TableModule, ButtonModule,MessagesModule, InputTextModule],
+    imports: [CommonModule, TableModule, ButtonModule, MessagesModule, ActiveFormatoPipe, InputTextModule],
     template: `
         @if (products.length > 0) {
         <p-table
@@ -40,12 +41,12 @@ import { InputTextModule } from 'primeng/inputtext';
         <ng-template pTemplate="caption">
             <div class="flex">
                 <p-iconField iconPosition="left" class="ml-auto">
-                    <input 
-                        pInputText 
-                        type="text" 
-                        (input)="dt2.filterGlobal($event.target.value, 'contains')" 
+                    <input
+                        pInputText
+                        type="text"
+                        (input)="dt2.filterGlobal($event.target.value, 'contains')"
                         placeholder="Buscar por nombre"
-                        pTooltip="Buscar por nombre" tooltipPosition="top" 
+                        pTooltip="Buscar por nombre" tooltipPosition="top"
                         />
                 </p-iconField>
             </div>
@@ -58,6 +59,7 @@ import { InputTextModule } from 'primeng/inputtext';
                     <th pSortableColumn="id">ID <p-sortIcon field="id" /></th>
                     <th pSortableColumn="name">Producto <p-sortIcon field="name" /></th>
                     <th pSortableColumn="basePrice">Precio Base <p-sortIcon field="basePrice" /></th>
+                    <th pSortableColumn="basePrice">IVA <p-sortIcon field="basePrice" /></th>
                     <th pSortableColumn="amount">Cantidad <p-sortIcon field="amount" /></th>
                     <th pSortableColumn="active">Activo <p-sortIcon field="active" /></th>
                     <th pSortableColumn="category.name">
@@ -77,9 +79,10 @@ import { InputTextModule } from 'primeng/inputtext';
                     </th>
                     <td>{{ product.id }}</td>
                     <td>{{ product.name }}</td>
-                    <td>{{ product.basePrice }}</td>
-                    <td>{{ showAmountBill ?  product.amountBill : product.amount  }}</td>
-                    <td>{{ product.active }}</td>
+                    <td>$ {{ product.basePrice }} COP</td>
+                    <td>{{ product.iva }} %</td>
+                    <td>{{ showAmountBill ?  product.amountBill : product.stock  }}</td>
+                    <td>{{ product.active | activeP}}</td>
                     <td>
                         {{
                             product.category
