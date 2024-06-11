@@ -56,7 +56,7 @@ import { AuthService } from 'src/app/demo/components/auth/services/auth.service'
             <div class="grid gap-3">
 
                 <!-- seccion para el cliente y los prodcutos dividoso en 2, arriba la infromacion del cliente, abajo los productos -->
-                <section class="grid col  md:col-7  border-round"> 
+                <section class="grid col  md:col-7  border-round">
 
                     <!-- seccion para la informacion del cliente -->
                     <section class="col-12 bg-white mb-3 border-round p-fluid">
@@ -68,7 +68,7 @@ import { AuthService } from 'src/app/demo/components/auth/services/auth.service'
                                 <p-button label="Agregar nuevo cliente" [raised]="true" (onClick)="typeClient(0)"></p-button>
                             </div>
                         </div>
-                        
+
 
                         @if(clientControls().existClient){
                             <!-- Mostrar tabla de cliente actuales -->
@@ -90,7 +90,7 @@ import { AuthService } from 'src/app/demo/components/auth/services/auth.service'
                             </p-dropdown>
                         }
 
-                                                
+
                         @if (clientControls().isNewClient) {
                             <!-- aca ira el formulario del nuevo cliente -->
                            <app-new-customer (onSaveCustomer)="saveCustomer($event)" />
@@ -101,7 +101,7 @@ import { AuthService } from 'src/app/demo/components/auth/services/auth.service'
                     <section class="col-12 bg-white border-round">
                         <h2>Seleccion de productos</h2>
                         <p-pickList [source]="sourceProducts" [target]="targetProducts" sourceHeader="Productos" targetHeader="Seleccionar" [dragdrop]="true" [responsive]="true"
-                           (onMoveToTarget)="onMove($event)" (onMoveToSource)="onMove($event)" (onMoveAllToSource)="onMove($event)" (onMoveAllToTarget)="onMove($event)" 
+                           (onMoveToTarget)="onMove($event)" (onMoveToSource)="onMove($event)" (onMoveAllToSource)="onMove($event)" (onMoveAllToTarget)="onMove($event)"
                            filterBy="name" sourceFilterPlaceholder="Buscar por nombre" targetFilterPlaceholder="Buscar por nombre">
                             <ng-template let-product pTemplate="item">
                                 <div class="flex flex-wrap p-2 align-items-center gap-3">
@@ -117,7 +117,7 @@ import { AuthService } from 'src/app/demo/components/auth/services/auth.service'
                             </ng-template>
                         </p-pickList>
                     </section>
-                    
+
                 </section>
 
                 <!-- seccion para ver la factura que se generara dinamicamente -->
@@ -143,7 +143,7 @@ export class AddOrderComponent implements OnInit {
     @Output() visibleChange = new EventEmitter<boolean>();
     @Output() saveOrder = new EventEmitter();
 
-    // Controles de clientes 
+    // Controles de clientes
     clientControls = signal({
         open: true,
         selectedClient: null,
@@ -165,7 +165,7 @@ export class AddOrderComponent implements OnInit {
     billInfo = signal({customer: null, products: []})
 
     constructor(
-        private fb: FormBuilder, private customerService: ClienteService, 
+        private fb: FormBuilder, private customerService: ClienteService,
         private productService: ProductoService,
         private messageService: MessageService,
         private auth: AuthService
@@ -197,7 +197,7 @@ export class AddOrderComponent implements OnInit {
                 existClient: false,
                 showForm: true
             })
-        } 
+        }
 
         if(control === 1){
             this.clientControls.set({
@@ -208,12 +208,7 @@ export class AddOrderComponent implements OnInit {
                 showForm: false
             })
 
-            if (localStorage.getItem('customers')) {
-                this.customers = JSON.parse(localStorage.getItem('customers') || '[]');
-                return
-            }
-
-            this.getClients('Lista cargada', 'Lista de clientes cargada correctamente.')
+            this.getClients()
         }
 
     }
@@ -247,18 +242,13 @@ export class AddOrderComponent implements OnInit {
         )
     }
 
-    private getClients(title: string, message: string){
+    private getClients(){
         this.customerService.getCustomers().subscribe({
             next: (res: any) => {
                 this.customers = res;
-                localStorage.setItem('customers', JSON.stringify(res));
-                this.messageService.clear()
-                this.messageService.add({ severity: 'success', summary: title, detail: message });
             },
             error: (err) => {
                 console.log(err);
-                this.messageService.clear()
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ha ocurrido un error inesperado, contacte con soporte. ' });
             },
         });
     }
@@ -274,13 +264,13 @@ export class AddOrderComponent implements OnInit {
         })
 
         this.billInfo.update((state) => ({...state, customer: value}))
-        
+
     }
 
     saveBill(event:any){
         const {customer, products} = event
         console.log(this.auth.user.value.id);
-        
+
         const data = {
             id: -1,
             userId:this.auth.user.value.id,
@@ -292,8 +282,8 @@ export class AddOrderComponent implements OnInit {
 
         this.saveOrder.emit(data)
         this.visibleChange.emit(false)
-        
-        
+
+
     }
 
 }

@@ -101,11 +101,11 @@ import { Router } from '@angular/router';
                     <label for="basePrice" class="font-semibold block mb-2"
                         >Precio base (en COP)</label
                     >
-                    <p-inputNumber 
+                    <p-inputNumber
                         formControlName="basePrice"
-                        inputId="basePrice" 
-                        mode="currency" 
-                        currency="COP" 
+                        inputId="basePrice"
+                        mode="currency"
+                        currency="COP"
                         locale="es-CO"
                         pTooltip="Precio sin IVA en pesos colombianos"
                         tooltipPosition="top"
@@ -121,10 +121,10 @@ import { Router } from '@angular/router';
                     <label for="iva" class="font-semibold block mb-2"
                         >IVA</label
                     >
-                    <p-inputNumber 
+                    <p-inputNumber
                         formControlName="iva"
-                        inputId="iva" 
-                        prefix="%" 
+                        inputId="iva"
+                        prefix="%"
                         [min]="0"
                         [max]="19"
                         pTooltip="Porcentaje de IVA del producto"
@@ -155,9 +155,9 @@ import { Router } from '@angular/router';
                                 [ngClass]="{'ng-invalid ng-dirty': validateInput('category')}"
                             ></p-dropdown>
                         </div>
-                        <p-button 
-                            label="Agregar" 
-                            icon="pi pi-plus" iconPos="right" 
+                        <p-button
+                            label="Agregar"
+                            icon="pi pi-plus" iconPos="right"
                             tooltipPosition="top" pTooltip="Agregar nueva categoria"
                             (onClick)="onAddNewCategory()" />
                     </div>
@@ -227,7 +227,7 @@ export class AddUpdateProductComponent implements OnInit {
 
     productForm = this.fb.group({
         name: ['', [Validators.required]],
-        basePrice: [0, [Validators.required, Validators.min(2500)]],
+        basePrice: [0, [Validators.required, Validators.min(200)]],
         active: [true, [Validators.required]],
         category: [{} as Category, [Validators.required]],
         iva: [0, [Validators.required, Validators.min(0), Validators.max(19)]],
@@ -297,7 +297,7 @@ export class AddUpdateProductComponent implements OnInit {
     getImg($event: any) {
         const file = $event.target.files[0];
         this.imgTouch = true;
-        
+
         if (file) {
             const reader = new FileReader();
             reader.onload = () => {
@@ -325,14 +325,14 @@ export class AddUpdateProductComponent implements OnInit {
             stock: Number(this.productForm.get('stock').value),
         };
 
-        this.router.navigate(['/backoffice/inventario/categorias'], 
-        { 
-            queryParams: { 
-                    add: true, 
+        this.router.navigate(['/backoffice/inventario/categorias'],
+        {
+            queryParams: {
+                    add: true,
                     newProduct: this.product ? false : true,
                     redirectTo: this.router.url,
                     ...product,
-                }, 
+                },
         })
     }
 }

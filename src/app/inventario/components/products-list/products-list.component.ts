@@ -40,12 +40,12 @@ import { InputTextModule } from 'primeng/inputtext';
         <ng-template pTemplate="caption">
             <div class="flex">
                 <p-iconField iconPosition="left" class="ml-auto">
-                    <input 
-                        pInputText 
-                        type="text" 
-                        (input)="dt2.filterGlobal($event.target.value, 'contains')" 
+                    <input
+                        pInputText
+                        type="text"
+                        (input)="dt2.filterGlobal($event.target.value, 'contains')"
                         placeholder="Buscar por nombre"
-                        pTooltip="Buscar por nombre" tooltipPosition="top" 
+                        pTooltip="Buscar por nombre" tooltipPosition="top"
                         />
                 </p-iconField>
             </div>
@@ -77,8 +77,8 @@ import { InputTextModule } from 'primeng/inputtext';
                     </th>
                     <td>{{ product.id }}</td>
                     <td>{{ product.name }}</td>
-                    <td>{{ product.basePrice }}</td>
-                    <td>{{ showAmountBill ?  product.amountBill : product.amount  }}</td>
+                    <td>$ {{ product.basePrice }} COP</td>
+                    <td>{{ showAmountBill ?  product.amountBill : product.stock  }}</td>
                     <td>{{ product.active }}</td>
                     <td>
                         {{
