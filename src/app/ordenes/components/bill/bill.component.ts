@@ -73,6 +73,7 @@ import { Product } from 'src/app/inventario/api';
                             <th>Producto</th>
                             <th>Cantidad</th>
                             <th>Precio</th>
+                            <th>IVA</th>
                             <th>Total</th>
                         </tr>
                     </ng-template>
@@ -90,12 +91,13 @@ import { Product } from 'src/app/inventario/api';
                                 </p-cellEditor>
                             </td>
                             <td>{{ product.basePrice }}</td>
+                            <td>{{ product.iva }}</td>
                             <td>{{ product.basePrice * product.quantity }}</td>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="summary">
                     <div class="flex align-items-center justify-content-between">
-                        Total de la cuenta <span class="font-bold">{{ total }}</span>
+                        Total de la cuenta (IVA incluido) <span class="font-bold">{{ total }}</span>
                     </div>
                     </ng-template>
                 </p-table>
@@ -130,7 +132,7 @@ export class BillComponent {
     }
 
     get total(){
-        return this.products.reduce((acc: number, product) => acc + (product.basePrice * product.quantity), 0)
+        return this.products.reduce((acc: number, product) => acc + ((product.basePrice * product.quantity * product.iva/100))+(product.basePrice * product.quantity), 0)
     }
 
     //Amount es la cantidad de productos que se van a comprar y el total es el precio total de la compra

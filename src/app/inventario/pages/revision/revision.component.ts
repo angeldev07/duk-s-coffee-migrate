@@ -51,7 +51,7 @@ export class RevisionComponent implements OnInit {
 
   constructor(private revisionService: RevisionService) {}
 
-  ngOnInit(): void { 
+  ngOnInit(): void {
 
     this.revisionService.getStats().subscribe({
       next: (res) => {

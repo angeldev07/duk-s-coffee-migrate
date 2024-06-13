@@ -110,6 +110,7 @@ export class OrderComponent implements OnInit {
         this.orderService.getOrdersById(orderId).subscribe({
             next: (res: any) => {
                 this.orderDetails.set(res);
+                console.log(res);
             },
             error: (err) => {
                 console.log(err);
@@ -130,7 +131,7 @@ export class OrderComponent implements OnInit {
             },
             error: (err) => {
                 this.messageService.clear();
-                this.messageService.add({ severity: 'error', summary: 'Error :(', detail: 'Ha ocurrido un error inesperado. Intentelo de nuevo' });
+                this.messageService.add({ severity: 'error', summary: 'Error :(', detail: err.error.message });
                 console.log(err);
             },
         });
