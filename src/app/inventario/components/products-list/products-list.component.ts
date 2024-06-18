@@ -79,7 +79,8 @@ import { ActiveFormatoPipe } from 'src/app/shared/pipes/active-formato.pipe'
                     </th>
                     <td>{{ product.id }}</td>
                     <td>{{ product.name }}</td>
-                    <td>{{ product.basePrice }}</td>
+                    <td>$ {{ product.basePrice }} COP</td>
+                    <td>{{ product.iva }} %</td>
                     <td>{{ showAmountBill ?  product.amountBill : product.stock  }}</td>
                     <td>{{ product.active | activeP}}</td>
                     <td>
